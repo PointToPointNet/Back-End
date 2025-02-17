@@ -1,0 +1,16 @@
+{
+  "name": "network-back-end",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "supervisor ./src/app.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.21.2",
+    "mysql": "^2.18.1",
+    "supervisor": "^0.12.0"
+  }
+}
