@@ -20,5 +20,5 @@ app.get("/database", (req, res) => {
 });
 
 app.listen(port, () => {
-    console.log("docker express start");
+    console.log(`http://localhost:${port}`);
 });
