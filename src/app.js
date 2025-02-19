@@ -1,6 +1,6 @@
-const { port } = require("./config/daemon.mjs");
-const connectionInfo = require("./database/info.mjs");
-const sqlQuery = require("./database/queries.mjs");
+const { port } = require("./config/daemon.js");
+const connectionInfo = require("./database/info.js");
+const sqlQuery = require("./database/queries.js");
 const express = require("express");
 const mysql = require("mysql");
 const fs = require("fs");
