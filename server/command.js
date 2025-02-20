@@ -43,7 +43,29 @@ const ifconfigToJSON = (ifconfig) => {
     return resultObj;
 }
 
+const os = require("os");
+
+const serverStatus = () => {
+    const memory = {
+        "usingMemory": (os.totalmem() - os.freemem()),
+        "totalMemory": os.totalmem(),
+    };
+
+    const cpu = {
+
+    }
+
+    // console.log(os.cpus());
+    console.log(Math.floor(os.uptime() / (60)));
+}
+serverStatus();
+
+const uptime = () => {
+    return { "runtime": Math.floor(os.uptime() / (60)) };
+}
+
 ifconfigToJSON(ifconfig());
 module.exports = {
     ifconfig: ifconfigToJSON(ifconfig()),
+    runtime: uptime(),
 };

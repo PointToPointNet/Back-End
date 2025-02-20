@@ -33,14 +33,21 @@ app.post("/memory", (req, res) => {
 });
 
 app.get("/memory", (req, res) => {
-    fs.readFile(`./src/json/memory.json`, "utf-8",(err, data) => {
+    fs.readFile(`./server/json/memory.json`, "utf-8",(err, data) => {
         console.log(data);
         res.json(JSON.parse(data));
     });
 });
 
 app.get("/network", (req, res) => {
-    fs.readFile(`./src/json/ifconfig.json`, "utf-8",(err, data) => {
+    fs.readFile(`./server/json/ifconfig.json`, "utf-8",(err, data) => {
+        console.log(data);
+        res.json(JSON.parse(data));
+    });
+});
+
+app.get("/runtime", (req, res) => {
+    fs.readFile(`./server/json/runtime.json`, "utf-8",(err, data) => {
         console.log(data);
         res.json(JSON.parse(data));
     });
