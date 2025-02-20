@@ -1,3 +1,4 @@
+// ifconfig
 const ifconfig = () => {
     return (`
         enp0s25: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
@@ -76,7 +77,25 @@ const uptime = () => {
     return { "runtime": Math.floor(os.uptime() / (60)) };
 }
 
-ifconfigToJSON(ifconfig());
+// ### last
+const last = () => {
+    return `
+        c21st11  pts/1        211.234.199.10   Thu Feb 20 19:03   still logged in
+        c21st12  pts/5        1.215.36.250     Thu Feb 20 18:02 - 18:04  (00:02)
+        c17st11  pts/4        211.234.200.24   Thu Feb 20 17:52   still logged in
+        c20st13  pts/1        14.38.218.60     Sun Feb  9 11:34 - 13:18  (01:44)
+        c21st08  pts/1        39.117.160.50    Sun Feb  9 01:00 - 06:50  (05:50)
+
+        wtmp begins Sun Feb  9 00:33:23 2025
+    `;
+}
+
+const lastToJSON = (last) => {
+    const user = last.trim()
+
+    
+}
+
 module.exports = {
     "ifconfig": ifconfigToJSON(ifconfig()),
     "runtime": uptime(),
