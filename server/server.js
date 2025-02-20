@@ -7,7 +7,7 @@ setInterval(() => {
         "totalMemory": os.totalmem(),
     };
     console.log(memory);
-    fs.writeFileSync("./json/memory.json", JSON.stringify(memory) ,(err) => {
+    fs.writeFileSync("./server/json/memory.json", JSON.stringify(memory) ,(err) => {
         if (err) throw err;
     });
 }, 3000);

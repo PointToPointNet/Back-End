@@ -1,5 +1,4 @@
 const ifconfig = () => {
-
     return (`
         enp0s25: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
         inet 110.5.238.107  netmask 255.255.255.128  broadcast 110.5.238.127
@@ -41,24 +40,10 @@ const ifconfigToJSON = (ifconfig) => {
         });
     });
     console.log(resultObj);
-    return JSON.stringify(resultObj);
+    return resultObj;
 }
 
 ifconfigToJSON(ifconfig());
-
-const setData = () => {
-    const packets = func();
-
-    // for (i in )
-}
-
-// setInterval(func(), 1000)
-
-// const memory = {
-//     "usingMemory": (os.totalmem() - os.freemem()),
-//     "totalMemory": os.totalmem(),
-// };
-// console.log(memory);
-// fs.writeFileSync("./json/memory.json", JSON.stringify(memory) ,(err) => {
-//     if (err) throw err;
-// });
+module.exports = {
+    ifconfig: ifconfigToJSON(ifconfig()),
+};

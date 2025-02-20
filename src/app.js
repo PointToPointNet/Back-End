@@ -21,7 +21,7 @@ app.get("/database", (req, res) => {
 });
 
 app.post("/memory", (req, res) => {
-    fs.readFile(`./json/memory.json`, (err, data) => {
+    fs.readFile(`../server/json/memory.json`, (err, data) => {
         console.log(data);
         res.json(data);
     });
