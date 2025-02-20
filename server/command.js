@@ -43,7 +43,15 @@ const ifconfigToJSON = (ifconfig) => {
     return resultObj;
 }
 
+// ### memory, cpu, disk
 const os = require("os");
+
+const top_cpu = () => {
+    // top -bn1 | grep "Cpu(s)" | awk '{print 100 - $8"%"}'
+    // console.log(`${(30 + (Math.random() * 10)).toFixed(1)}%`);
+    return `${(30 + (Math.random() * 10)).toFixed(1)}%`;
+}
+top_cpu();
 
 const serverStatus = () => {
     const memory = {
@@ -52,20 +60,25 @@ const serverStatus = () => {
     };
 
     const cpu = {
+        "cpuUtilization": top_cpu(),
+    };
 
-    }
+    const disk = {
 
-    // console.log(os.cpus());
-    console.log(Math.floor(os.uptime() / (60)));
+    };
+
+    return {"memory": memory, "cpu": cpu, "disk": disk};
 }
 serverStatus();
 
+// ### runtime
 const uptime = () => {
     return { "runtime": Math.floor(os.uptime() / (60)) };
 }
 
 ifconfigToJSON(ifconfig());
 module.exports = {
-    ifconfig: ifconfigToJSON(ifconfig()),
-    runtime: uptime(),
+    "ifconfig": ifconfigToJSON(ifconfig()),
+    "runtime": uptime(),
+    "serverStatus": serverStatus(),
 };

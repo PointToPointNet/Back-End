@@ -1,28 +1,27 @@
 const fs = require("fs");
 const os = require("os");
 
-const { ifconfig, runtime } = require("./command");
+const { ifconfig, runtime, serverStatus } = require("./command");
+
+
+
+const makeJSON = (data) => {
+    const serverNames = ["test"];
+    const result = serverNames.map(serverName => ({ [serverName]: data }));
+    return JSON.stringify(result);
+}
 
 setInterval(() => {
-    const memory = {
-        "usingMemory": (os.totalmem() - os.freemem()),
-        "totalMemory": os.totalmem(),
-    };
-
-    `{
-        "memory": "~~~",
-        "cpu": "~~~",
-        "disk": "~~~",
-    }`
-    console.log(memory);
-
-    fs.writeFileSync("./server/json/memory.json", JSON.stringify(memory), (err) => {
+    // fs.writeFileSync("./server/json/memory.json", JSON.stringify(memory), (err) => {
+    //     if (err) throw err;
+    // });
+    fs.writeFileSync("./server/json/ifconfig.json", makeJSON(ifconfig), (err) => {
         if (err) throw err;
     });
-    fs.writeFileSync("./server/json/ifconfig.json", JSON.stringify(ifconfig), (err) => {
+    fs.writeFileSync("./server/json/runtime.json", makeJSON(runtime), (err) => {
         if (err) throw err;
     });
-    fs.writeFileSync("./server/json/runtime.json", JSON.stringify(runtime), (err) => {
+    fs.writeFileSync("./server/json/status.json", makeJSON(serverStatus), (err) => {
         if (err) throw err;
     });
 }, 3000);
