@@ -26,7 +26,7 @@ app.get("/database", (req, res) => {
 });
 
 app.post("/memory", (req, res) => {
-    fs.readFile(`./json/memory.json`, (err, data) => {
+    fs.readFile(`./json/memory.json`, (err, data) => { // 되던게 안되는 매직
         console.log(data);
         res.json(data);
     });
@@ -35,7 +35,14 @@ app.post("/memory", (req, res) => {
 app.get("/memory", (req, res) => {
     fs.readFile(`./src/json/memory.json`, "utf-8",(err, data) => {
         console.log(data);
-        res.json(data);
+        res.json(JSON.parse(data));
+    });
+});
+
+app.get("/network", (req, res) => {
+    fs.readFile(`./src/json/ifconfig.json`, "utf-8",(err, data) => {
+        console.log(data);
+        res.json(JSON.parse(data));
     });
 });
 

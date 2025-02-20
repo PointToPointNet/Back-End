@@ -39,7 +39,7 @@ const ifconfigToJSON = (ifconfig) => {
             }
         });
     });
-    console.log(resultObj);
+    // console.log(resultObj);
     return resultObj;
 }
 
