@@ -1,9 +1,18 @@
 class Commands {
     constructor(id) {
         this.id = id;
+        this.exec = null;
+    }
+    init() {
+        const { exec } = require('child_process');
+        this.exec = exec.bind(require('child_process')); // `exec`을 바인딩
     }
     // ### ifconfig
     ifconfig() {
+        this.exec("ifconfig", (err, stdout, stderr) => {
+            if (err || stderr) throw err || stderr;
+            console.log(stdout);
+        });
         return (`
             enp0s25: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
             inet 110.5.238.107  netmask 255.255.255.128  broadcast 110.5.238.127
@@ -145,6 +154,7 @@ class Commands {
     }
 
     getData() {
+        this.init();
         // this.lastToJSON();
         return {
             "ifconfig": this.ifconfigToJSON(),
@@ -157,5 +167,5 @@ class Commands {
 }
 
 const commands = new Commands("commands");
-// commands.getData();
+commands.getData();
 module.exports = commands;

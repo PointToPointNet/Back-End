@@ -47,6 +47,13 @@ app.get("/runtime", (req, res) => {
     });
 });
 
+app.get("/status", (req, res) => {
+    fs.readFile(`./server/json/status.json`, "utf-8",(err, data) => {
+        console.log(data);
+        res.json(JSON.parse(data));
+    });
+});
+
 app.get("/ping", (req, res) => {
     fs.readFile(`./server/json/ping.json`, "utf-8",(err, data) => {
         console.log(data);
