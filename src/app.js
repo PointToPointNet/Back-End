@@ -47,6 +47,20 @@ app.get("/runtime", (req, res) => {
     });
 });
 
+app.get("/ping", (req, res) => {
+    fs.readFile(`./server/json/ping.json`, "utf-8",(err, data) => {
+        console.log(data);
+        res.json(JSON.parse(data));
+    });
+});
+
+app.get("/userlist", (req, res) => {
+    fs.readFile(`./server/json/userList.json`, "utf-8",(err, data) => {
+        console.log(data);
+        res.json(JSON.parse(data));
+    });
+});
+
 app.listen(port, () => {
     console.log(`http://localhost:${port}`);
 });
