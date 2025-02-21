@@ -1,39 +1,52 @@
-const fs = require("fs");
-const os = require("os");
+class Server {
+    constructor(id) {
+        this.id = id;
+        this.commands = null;
+    }
 
-const { ifconfig, runtime, serverStatus } = require("./command");
+    setServer() {
+        if (this.commandResults !== null) {
+            this.commands = require("./command.js");
+        } else {
+            console.error("commands객체체가 안들어왔어요.");
+        }
+    }
 
+    makeJSON(data) {
+        const serverNames = ["test"];
+        const result = serverNames.map(serverName => ({ [serverName]: data }));
+        return JSON.stringify(result);
+    }
 
+    fileWrite(fileName, content) {
+        const fs = require("fs");
 
-const makeJSON = (data) => {
-    const serverNames = ["test"];
-    const result = serverNames.map(serverName => ({ [serverName]: data }));
-    return JSON.stringify(result);
+        fs.writeFileSync(`./server/json/${fileName}.json`, this.makeJSON(content), (err) => {
+            if (err) throw err;
+        });
+    }
+
+    serverWork() {
+        const { ifconfig, runtime, serverStatus, ping } = this.commands.getData();
+        this.fileWrite("ifconfig", ifconfig);
+        this.fileWrite("runtime", runtime);
+        this.fileWrite("status", serverStatus);
+        this.fileWrite("ping", ping);
+        console.log("서버 실행중 . . .");
+    }
+
+    serverRun() {
+        this.serverWork();
+        const serverRun = setInterval(() => {
+            this.serverWork();
+        }, 3000);
+    }
+
+    run() {
+        this.setServer();
+        this.serverRun();
+    }
 }
 
-setInterval(() => {
-    // fs.writeFileSync("./server/json/memory.json", JSON.stringify(memory), (err) => {
-    //     if (err) throw err;
-    // });
-    fs.writeFileSync("./server/json/ifconfig.json", makeJSON(ifconfig), (err) => {
-        if (err) throw err;
-    });
-    fs.writeFileSync("./server/json/runtime.json", makeJSON(runtime), (err) => {
-        if (err) throw err;
-    });
-    fs.writeFileSync("./server/json/status.json", makeJSON(serverStatus), (err) => {
-        if (err) throw err;
-    });
-}, 3000);
-
-
-/*
-짬통
-fs.writeFileSync("./src/json/memory.json", JSON.stringify(memory) ,(err) => {
-        if (err) throw err;
-    });
-    fs.writeFileSync("./src/json/ifconfig.json", JSON.stringify(ifconfig), (err) => {
-        if (err) throw err;
-    });
-
-*/
+const server = new Server("server");
+server.run();
