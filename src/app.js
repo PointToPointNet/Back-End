@@ -7,7 +7,7 @@ const mysql = require("mysql2");
 const fs = require("fs");
 const cors = require("cors");
 
-const connection = mysql.createConnection(connectionInfo);
+// const connection = mysql.createConnection(connectionInfo);
 
 const app = express();
 
