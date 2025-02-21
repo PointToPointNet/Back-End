@@ -3,7 +3,7 @@ const connectionInfo = require("./database/info.js");
 const sqlQuery = require("./database/queries.js");
 
 const express = require("express");
-const mysql = require("mysql");
+const mysql = require("mysql2");
 const fs = require("fs");
 const cors = require("cors");
 

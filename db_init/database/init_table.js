@@ -1,4 +1,4 @@
-const [fs, mysql, info, path] = [require('fs'), require('mysql'), require("../../src/database/info"), require('path')];
+const [fs, mysql, info, path] = [require('fs'), require('mysql2'), require("../../src/database/info"), require('path')];
 module.exports = () => {
     let copyInfo = info;
     copyInfo.multipleStatements = true;

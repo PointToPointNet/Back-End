@@ -1,6 +1,6 @@
 const [fs, path, mysql, info, sqlTemplate, parseApacheErrData] = [require('fs'),
 require('path'),
-require('mysql'),
+require('mysql2'),
 require("../../src/database/info"),
 require("../database/sqlTemplate"),
 require("../utils/parseApacheErrData")];

@@ -93,7 +93,21 @@ class Commands {
     }
 
     lastToJSON() {
-        const user = this.last.trim();
+        const resultObj = {
+            "username": "",
+            "terminal": "",
+            "ip": "",
+            "loginTime": "",
+            "logoutTime": "",
+            "connecting": false
+        }
+        const user = this.last().trim().split("\n");
+        user.forEach((line) => {
+            // console.log(line.match(/(\w+)\s+(pts\/\d+)\s+([\d.]+)\s+(\w{3}\s+\w{3}\s+\d{1,2}\s+\d{2}:\d{2})\s+-?\s+(\d+:\d+)?\s+(\((\d+:\d+)\))?\s*(still logged in)?/));
+            console.log(line.match(/(\S+)\s+(pts\/\d+|tty\d+|\S+)\s+([\d.]+|\S+)\s+(\w{3} \w{3} \d+ \d+:\d+)\s+-?\s(?:\((\d+:\d+)\))?\s*(still logged in)?/))
+        });
+        
+        // console.log(user);
     }
 
     // ping -c 1 8.8.8.8
@@ -126,6 +140,7 @@ class Commands {
     }
 
     getData() {
+        this.lastToJSON();
         return {
             "ifconfig": this.ifconfigToJSON(),
             "runtime": this.uptime(),
@@ -136,5 +151,5 @@ class Commands {
 }
 
 const commands = new Commands("commands");
-// commands.getData();
+commands.getData();
 module.exports = commands;
