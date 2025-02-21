@@ -13,7 +13,7 @@ Create table memory_usage(
     server_id int not null, 
     mem_avg int,
     recorded_date Date default(CURRENT_DATE),
-    recorded_time Date default(CURRENT_TIME)
+    recorded_time Time default(CURRENT_TIME)
     -- foreign key (server_id) references servers(server_id) 
 );
 
@@ -22,7 +22,7 @@ Create table cpu_usage(
     server_id int not null, 
     cpu_avg int,
     recorded_date Date default(CURRENT_DATE),
-    recorded_time Date default(CURRENT_TIME)
+    recorded_time Time default(CURRENT_TIME)
     -- foreign key (server_id) references servers(server_id) 
 );
 
