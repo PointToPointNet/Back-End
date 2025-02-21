@@ -27,11 +27,12 @@ class Server {
     }
 
     serverWork() {
-        const { ifconfig, runtime, serverStatus, ping } = this.commands.getData();
+        const { ifconfig, runtime, serverStatus, ping, userList } = this.commands.getData();
         this.fileWrite("ifconfig", ifconfig);
         this.fileWrite("runtime", runtime);
         this.fileWrite("status", serverStatus);
         this.fileWrite("ping", ping);
+        this.fileWrite("userList", userList);
         console.log("서버 실행중 . . .");
     }
 

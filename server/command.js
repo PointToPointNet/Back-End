@@ -93,21 +93,26 @@ class Commands {
     }
 
     lastToJSON() {
-        const resultObj = {
-            "username": "",
-            "terminal": "",
-            "ip": "",
-            "loginTime": "",
-            "logoutTime": "",
-            "connecting": false
-        }
+        const result = [];
         const user = this.last().trim().split("\n");
         user.forEach((line) => {
-            // console.log(line.match(/(\w+)\s+(pts\/\d+)\s+([\d.]+)\s+(\w{3}\s+\w{3}\s+\d{1,2}\s+\d{2}:\d{2})\s+-?\s+(\d+:\d+)?\s+(\((\d+:\d+)\))?\s*(still logged in)?/));
-            console.log(line.match(/(\S+)\s+(pts\/\d+|tty\d+|\S+)\s+([\d.]+|\S+)\s+(\w{3} \w{3} \d+ \d+:\d+)\s+-?\s(?:\((\d+:\d+)\))?\s*(still logged in)?/))
+            const regEx = /(\w+)\s+(pts\/\d+|tty\d+|\S+)\s+([\d.]+|\S+)\s+(\w{3}\s+\w{3}\s+\d+\s+\d+:\d+)\s+-?\s+(\d+:\d+)?\s+(still logged in)?/
+            if (regEx.test(line)) {
+                // console.log(line.match(/(\w+)\s+(pts\/\d+|tty\d+|\S+)\s+([\d.]+|\S+)\s+(\w{3}\s+\w{3}\s+\d+\s+\d+:\d+)\s+-?\s+(\d+:\d+)?\s+(still logged in)?/)[1]);
+                const [_, username, terminal, ip, loginTime, logoutTime, connecting] = line.match(regEx);
+                const userInfo = {
+                    "username": username,
+                    "terminal": terminal,
+                    "ip": ip,
+                    "loginTime": loginTime,
+                    "logoutTime": logoutTime ? logoutTime : "",
+                    "connecting": connecting ? true : false
+                }
+                result.push(userInfo);
+            }
         });
-        
-        // console.log(user);
+        // console.log(result);
+        return result;
     }
 
     // ping -c 1 8.8.8.8
@@ -125,7 +130,7 @@ class Commands {
     }
 
     pingToJson() {
-        const resultObj = {"pingResponse": 0};
+        const resultObj = { "pingResponse": 0 };
         const pingData = this.ping().split("\n").filter((line) => {
             return line.includes("시간=") || line.includes("time=");
         });
@@ -140,16 +145,17 @@ class Commands {
     }
 
     getData() {
-        this.lastToJSON();
+        // this.lastToJSON();
         return {
             "ifconfig": this.ifconfigToJSON(),
             "runtime": this.uptime(),
             "serverStatus": this.serverStatus(),
             "ping": this.pingToJson(),
+            "userList": this.lastToJSON(),
         };
     }
 }
 
 const commands = new Commands("commands");
-commands.getData();
+// commands.getData();
 module.exports = commands;
