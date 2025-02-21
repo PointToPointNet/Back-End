@@ -136,5 +136,5 @@ class Commands {
 }
 
 const commands = new Commands("commands");
-commands.getData();
+// commands.getData();
 module.exports = commands;
