@@ -32,7 +32,7 @@ class Server {
     fileWrite(fileName, content) {
         const fs = require("fs");
 
-        fs.writeFileSync(`./server/json/${fileName}.json`, JSON.stringify(content), (err) => {
+        fs.writeFileSync(`./json/${fileName}.json`, JSON.stringify(content), (err) => {
             if (err) throw err;
         });
     }
