@@ -1,8 +1,13 @@
 class Commands {
     constructor(id) {
-        this.id = id;
+        this._id = id;
         this.exec = null;
     }
+
+    get id() {
+        return this._id;
+    }
+
     init() {
         const { exec } = require('child_process');
         const { promisify } = require("util");
@@ -273,6 +278,4 @@ class Commands {
     }
 }
 
-const commands = new Commands("commands");
-// commands.getData();
-module.exports = commands;
+module.exports = Commands;

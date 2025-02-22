@@ -1,40 +1,66 @@
 class Server {
     constructor(id) {
         this.id = id;
-        this.commands = null;
+        // this.commands = null;
+        this.serverList = null;
     }
 
     setServer() {
-        if (this.commandResults !== null) {
-            this.commands = require("./command.js");
-        } else {
-            console.error("commands객체체가 안들어왔어요.");
-        }
+        const Commands = require("./command.js");
+
+        const serverName = ["test", "c1", "c2", "c3", "c4"];
+        this.serverList = serverName.map((server) => {
+            return new Commands(server);
+        });
     }
 
+    // makeJSON(data) {
+    //     const serverNames = ["test", "c1", "c2", "c3", "c4"];
+    //     const result = serverNames.map(serverName => ({ [serverName]: data }));
+    //     return JSON.stringify(result);
+    // }
+
     makeJSON(data) {
-        const serverNames = ["test", "c1", "c2", "c3", "c4"];
-        const result = serverNames.map(serverName => ({ [serverName]: data }));
-        return JSON.stringify(result);
+        console.log(data);
+        return this.serverList.map(async (server) => {
+            return {
+                [server]: data
+            }
+        });
     }
 
     fileWrite(fileName, content) {
         const fs = require("fs");
 
-        fs.writeFileSync(`./server/json/${fileName}.json`, this.makeJSON(content), (err) => {
+        fs.writeFileSync(`./server/json/${fileName}.json`, JSON.stringify(content), (err) => {
             if (err) throw err;
         });
     }
 
     async serverWork() {
-        const { ifconfig, runtime, serverStatus, ping, userList, usedPort, activePort } = await this.commands.getData();
-        this.fileWrite("ifconfig", ifconfig);
-        this.fileWrite("runtime", runtime);
-        this.fileWrite("status", serverStatus);
-        this.fileWrite("ping", ping);
-        this.fileWrite("userList", userList);
-        this.fileWrite("usedPort", usedPort);
-        this.fileWrite("activePort", activePort);
+        const serverDataList = [];
+
+        for (const server of this.serverList) {
+            serverDataList.push({ id: server.id, data: await server.getData() });
+        }
+
+        const dataCollections = { // fileName, serverData
+            ifconfig: "ifconfig",
+            runtime: "runtime",
+            status: "serverStatus",
+            ping: "ping",
+            userList: "userList",
+            usedPort: "usedPort",
+            activePort: "activePort",
+        };
+
+        for (const fileName in dataCollections) {
+            this.fileWrite(fileName, serverDataList.map(serverData => {
+                const { id, data } = serverData;
+                return { [id]: data[dataCollections[fileName]] }
+            }));
+        }
+
         console.log("서버 실행중 . . .");
     }
 
