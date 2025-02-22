@@ -13,7 +13,7 @@ class Server {
     }
 
     makeJSON(data) {
-        const serverNames = ["test"];
+        const serverNames = ["test", "c1", "c2", "c3", "c4"];
         const result = serverNames.map(serverName => ({ [serverName]: data }));
         return JSON.stringify(result);
     }
@@ -26,8 +26,8 @@ class Server {
         });
     }
 
-    serverWork() {
-        const { ifconfig, runtime, serverStatus, ping, userList, usedPort, activePort } = this.commands.getData();
+    async serverWork() {
+        const { ifconfig, runtime, serverStatus, ping, userList, usedPort, activePort } = await this.commands.getData();
         this.fileWrite("ifconfig", ifconfig);
         this.fileWrite("runtime", runtime);
         this.fileWrite("status", serverStatus);
