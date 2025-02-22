@@ -1,73 +1,44 @@
-const { port } = require("./config/daemon.js");
-const connectionInfo = require("./database/info.js");
-const sqlQuery = require("./database/queries.js");
+class Service {
+    constructor(id) {
+        this.id = id;
+        this.express = null;
+        this.app = null;
+    }
 
-const express = require("express");
-const mysql = require("mysql2");
-const fs = require("fs");
-const cors = require("cors");
+    init() {
+        this.express = require("express");
+        this.app = this.express();
 
-// const connection = mysql.createConnection(connectionInfo);
+        const cors = require("cors");
+        this.app.use(cors({
+            origin: '*',
+        }));
+    }
 
-const app = express();
+    route() {
+        const router = require("./route/route_JSON.js");
 
-app.use(cors({
-    origin: '*',
-}));
+        this.app.use("/network", router("ifconfig"));
+        this.app.use("/runtime", router("runtime"));
+        this.app.use("/status", router("status"));
+        this.app.use("/ping", router("ping"));
+        this.app.use("/userlist", router("userList"));
+    }
 
-app.get("/", (req, res) => {
-    res.send("Hello world");
-});
+    listen() {
+        const { port } = require("./config/daemon.js");
 
-app.post("/memory", (req, res) => {
-    fs.readFile(`./json/memory.json`, (err, data) => { // 되던게 안되는 매직
-        console.log(data);
-        res.json(data);
-    });
-});
+        this.app.listen(port, () => {
+            console.log(`http://localhost:${port}`);
+        });
+    }
 
-app.get("/memory", (req, res) => {
-    fs.readFile(`./server/json/memory.json`, "utf-8",(err, data) => {
-        console.log(data);
-        res.json(JSON.parse(data));
-    });
-});
+    service() {
+        this.init();
+        this.route();
+        this.listen();
+    }
+}
 
-app.get("/network", (req, res) => {
-    fs.readFile(`./server/json/ifconfig.json`, "utf-8",(err, data) => {
-        console.log(data);
-        res.json(JSON.parse(data));
-    });
-});
-
-app.get("/runtime", (req, res) => {
-    fs.readFile(`./server/json/runtime.json`, "utf-8",(err, data) => {
-        console.log(data);
-        res.json(JSON.parse(data));
-    });
-});
-
-app.get("/status", (req, res) => {
-    fs.readFile(`./server/json/status.json`, "utf-8",(err, data) => {
-        console.log(data);
-        res.json(JSON.parse(data));
-    });
-});
-
-app.get("/ping", (req, res) => {
-    fs.readFile(`./server/json/ping.json`, "utf-8",(err, data) => {
-        console.log(data);
-        res.json(JSON.parse(data));
-    });
-});
-
-app.get("/userlist", (req, res) => {
-    fs.readFile(`./server/json/userList.json`, "utf-8",(err, data) => {
-        console.log(data);
-        res.json(JSON.parse(data));
-    });
-});
-
-app.listen(port, () => {
-    console.log(`http://localhost:${port}`);
-});
+const service = new Service("service");
+service.service();
