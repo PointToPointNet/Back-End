@@ -1,5 +1,5 @@
 DROP TABLE IF EXISTS servers, memory_usage,cpu_usage,packet_usage, apache_log,apache_errors_log ,mysql_errors_log,ufw_logs,auth_logs,critical_logs;
-
+DROP VIEW IF EXISTS TOTAL_TABLE;
 Create table servers (
 	server_id int primary key auto_increment,
     label varchar(50) not null,
@@ -105,3 +105,24 @@ CREATE TABLE critical_logs (
     message TEXT NOT NULL
    	-- foreign key (server_id) references servers(server_id)
 );
+
+create view total_table as 
+select m.recorded_date, m.server_id, m.mem_avg, c.cpu_avg,p.rx_data,p.tx_data,p.total,a.web_access_count,ae.web_error_count,ufw_count, auth_error_count
+from memory_usage m
+left join cpu_usage c
+on m.recorded_date = c.recorded_date and 
+m.server_id = c.server_id
+left join packet_usage p
+on p.recorded_date = m.recorded_date
+and p.server_id = m.server_id
+left join (select substr( access_time,1,10 ) recorded_date ,server_id, count(*) web_access_count from apache_log a  where status_code in (200,201,204) group by substr( access_time,1,10 ),server_id) a
+on a.recorded_date = m.recorded_date 
+and a.server_id = m.server_id
+left join (select substr(log_time,1,10) recorded_date , server_id,count(*) web_error_count from apache_errors_log where log_level in ('emerg','error') group by substr(log_time,1,10), server_id) ae
+on ae.recorded_date = m.recorded_date and ae.server_id = m.server_id
+left join (select substr(log_time, 1, 10) recorded_date, server_id, count(*) ufw_count from ufw_logs where action = "BLOCK" group by substr(log_time, 1, 10), server_id) ufw
+on ufw.recorded_date = m.recorded_date and ufw.server_id = m.server_id
+left join (select substr(log_time,1,10) recorded_date, server_id, count(*) auth_error_count from auth_logs 
+where action like '%failure%' or action like '%not%' or action like '%Failed%' 
+group by substr(log_time,1,10) , server_id) auth
+on auth.recorded_date = m.recorded_date and auth.server_id = m.server_id;

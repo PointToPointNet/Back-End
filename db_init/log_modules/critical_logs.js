@@ -19,7 +19,7 @@ module.exports = ()=>{
             const server_id = matchLog[2];
             const service = matchLog[3];
             const log_level = matchLog[4];
-            const message = matchLog[4];
+            const message = matchLog[5];
             return [log_time, server_id, service, log_level, message];
         } );
         //END map
@@ -29,7 +29,7 @@ module.exports = ()=>{
                 console.log("Critical_log 인설트 실패!!");
             }
             console.log( `Critical_log ${result.affectedRows}개의 로그가 삽입되었습니다.` )
-        } )
+        } );
         //END db
         db.end();
     });

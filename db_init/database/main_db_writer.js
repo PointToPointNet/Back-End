@@ -5,6 +5,7 @@ const ufw_logs = require("../log_modules/ufw_logs");
 const auth_logs = require("../log_modules/auth_logs");
 const critical_logs = require("../log_modules/critical_logs");
 
+const dumy_data_insert = require("./insert_dumy_data");
 const init_table = require("./init_table");
 module.exports = () => {
     const logInsert = () => {
@@ -16,6 +17,6 @@ module.exports = () => {
         critical_logs();
     }
     init_table();
-
     setTimeout(()=>{logInsert()},2000);
+    setTimeout(()=>{dumy_data_insert();},4000);
 }

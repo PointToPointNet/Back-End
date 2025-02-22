@@ -5,12 +5,13 @@ module.exports = () => {
 
     const db = mysql.createConnection(copyInfo);
 
-    fs.readFile(path.join(__dirname, "../config/dumy_data_insert.sql"), (err, sql) => {
+    fs.readFile(path.join(__dirname, "../config/dumy_data_insert.sql"), 'utf8', (err, sql) => {
         if (err) {
             console.log(err)
             console.log("Dumy 데이터 파일 읽기 실패!", err);
             return;
         }
+        console.log( sql );
         db.beginTransaction((err) => {
             if (err) {
                 console.log("트랜잭션 시작 실패!", err);
