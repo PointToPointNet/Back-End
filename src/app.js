@@ -23,7 +23,9 @@ class Service {
         this.app.use("/runtime", route_JSON("runtime"));
         this.app.use("/status", route_JSON("status"));
         this.app.use("/ping", route_JSON("ping"));
-        this.app.use("/userlist", route_JSON("userList"));
+        this.app.use("/user_list", route_JSON("userList"));
+        this.app.use("/used_port", route_JSON("usedPort"));
+        this.app.use("/active_port", route_JSON("activePort"));
 
         // DB 영역
         this.app.use("/get_total_page_info", get_total_page_info());

@@ -10,47 +10,47 @@ class Commands {
         this.exec = promisify(exec);
     }
     // ### ifconfig
-    // ifconfig() {
-    //     this.exec("ifconfig", (err, stdout, stderr) => {
-    //         if (err || stderr) throw err || stderr;
-    //         console.log(stdout);
-    //         // return stdout.trim();
-    //     });
-    //     return (`
-    //         enp0s25: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
-    //         inet 110.5.238.107  netmask 255.255.255.128  broadcast 110.5.238.127
-    //         inet6 fe80::f900:ed1d:473c:e9d0  prefixlen 64  scopeid 0x20<link>
-    //         ether f0:de:f1:45:d1:33  txqueuelen 1000  (Ethernet)
-    //         RX packets 31499952  bytes 14872699632 (14.8 GB)
-    //         RX errors 0  dropped 173  overruns 0  frame 0
-    //         TX packets 44796728  bytes 42813807568 (42.8 GB)
-    //         TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
-    //         device interrupt 20  memory 0xf2600000-f2620000  
-
-    //         lo: flags=73<UP,LOOPBACK,RUNNING>  mtu 65536
-    //         inet 127.0.0.1  netmask 255.0.0.0
-    //         inet6 ::1  prefixlen 128  scopeid 0x10<host>
-    //         loop  txqueuelen 1000  (Local Loopback)
-    //         RX packets 39109789  bytes 29185449490 (29.1 GB)
-    //         RX errors 0  dropped 0  overruns 0  frame 0
-    //         TX packets 39109789  bytes 29185449490 (29.1 GB)
-    //         TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
-    //     `).trim();
-    // }
-    async ifconfig() {
-        // return new Promise((resolve, reject) => {
-        //     this.exec("ifconfig", (err, stdout, stderr) => {
-        //         if (err || stderr) {
-        //             reject(err || stderr);
-        //             return;
-        //         }
-        //         resolve(stdout.trim());
-        //     });
+    ifconfig() {
+        // this.exec("ifconfig", (err, stdout, stderr) => {
+        //     if (err || stderr) throw err || stderr;
+        //     console.log(stdout);
+        //     // return stdout.trim();
         // });
-        const { stdout, stderr } = await this.exec("ifconfig");
-        if (stderr) return "";
-        return stdout.trim();
+        return (`
+            enp0s25: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
+            inet 110.5.238.107  netmask 255.255.255.128  broadcast 110.5.238.127
+            inet6 fe80::f900:ed1d:473c:e9d0  prefixlen 64  scopeid 0x20<link>
+            ether f0:de:f1:45:d1:33  txqueuelen 1000  (Ethernet)
+            RX packets 31499952  bytes 14872699632 (14.8 GB)
+            RX errors 0  dropped 173  overruns 0  frame 0
+            TX packets 44796728  bytes 42813807568 (42.8 GB)
+            TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+            device interrupt 20  memory 0xf2600000-f2620000  
+
+            lo: flags=73<UP,LOOPBACK,RUNNING>  mtu 65536
+            inet 127.0.0.1  netmask 255.0.0.0
+            inet6 ::1  prefixlen 128  scopeid 0x10<host>
+            loop  txqueuelen 1000  (Local Loopback)
+            RX packets 39109789  bytes 29185449490 (29.1 GB)
+            RX errors 0  dropped 0  overruns 0  frame 0
+            TX packets 39109789  bytes 29185449490 (29.1 GB)
+            TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+        `).trim();
     }
+    // async ifconfig() {
+    //     // return new Promise((resolve, reject) => {
+    //     //     this.exec("ifconfig", (err, stdout, stderr) => {
+    //     //         if (err || stderr) {
+    //     //             reject(err || stderr);
+    //     //             return;
+    //     //         }
+    //     //         resolve(stdout.trim());
+    //     //     });
+    //     // });
+    //     const { stdout, stderr } = await this.exec("ifconfig");
+    //     if (stderr) return "";
+    //     return stdout.trim();
+    // }
 
     async ifconfigToJSON() {
         const resultObj = {};
@@ -142,7 +142,7 @@ class Commands {
         return result;
     }
 
-    // ping -c 1 8.8.8.8
+    // ### ping -c 1 8.8.8.8
     ping() {
         const randomPing = ((Math.random() * 10 + 30).toFixed(1))
         // console.log(randomPing);
@@ -171,7 +171,7 @@ class Commands {
         return resultObj;
     }
 
-    // ss -tan state established | awk '{print $4}' | awk -F ':' '{print $NF}' | sort | uniq -c | sort -nr
+    // ### ss -tan state established | awk '{print $4}' | awk -F ':' '{print $NF}' | sort | uniq -c | sort -nr
     ss() {
         return `
             4 22
@@ -188,26 +188,60 @@ class Commands {
     ssToJSON() {
         const result = [];
         const ss = this.ss();
+
         return ss.split("\n").map((line) => {
             const [count, port] = line.trim().split(" ");
             return { "port": port, "count": count };
         });
     }
 
+    // ### netstat -tulnp
+    netstat() {
+        return `
+            (Not all processes could be identified, non-owned process info
+            will not be shown, you would have to be root to see it all.)
+            Active Internet connections (only servers)
+            Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name
+            tcp        0      0 0.0.0.0:10035           0.0.0.0:*               LISTEN      -
+            tcp        0      0 0.0.0.0:33171           0.0.0.0:*               LISTEN      -
+            tcp        0      0 110.5.238.107:45141     0.0.0.0:*               LISTEN      -
+            tcp        0      0 0.0.0.0:8501            0.0.0.0:*               LISTEN      -
+            tcp        0      0 127.0.0.53:53           0.0.0.0:*               LISTEN      -
+            tcp        0      0 0.0.0.0:10230           0.0.0.0:*               LISTEN      -
+            tcp6       0      0 :::33040                :::*                    LISTEN      -
+            tcp6       0      0 :::80                   :::*                    LISTEN      -
+            udp        0      0 127.0.0.53:53           0.0.0.0:*                           -
+            udp        0      0 0.0.0.0:51188           0.0.0.0:*                           -
+        `.trim();
+    }
+    netstatToJSON() {
+        const result = [];
+        const netstat = this.netstat();
+        const port = netstat.trim().split("\n").filter(line => /:\d+/.test(line)).map(line => line.trim().split(/\s+/));
+        port.forEach(portData => {
+            const [protocol, , , address] = portData;
+            result.push({"protocol": protocol, "address": address});
+        });
+
+        // console.log(result);
+        return result;
+    }
+
     getData() {
         this.init();
         // this.lastToJSON();
-        this.ssToJSON();
         return {
             "ifconfig": this.ifconfigToJSON(),
             "runtime": this.uptime(),
             "serverStatus": this.serverStatus(),
             "ping": this.pingToJson(),
             "userList": this.lastToJSON(),
+            "usedPort": this.ssToJSON(),
+            "activePort": this.netstatToJSON(),
         };
     }
 }
 
 const commands = new Commands("commands");
-commands.getData();
+// commands.getData();
 module.exports = commands;
