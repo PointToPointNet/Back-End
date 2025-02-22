@@ -5,7 +5,9 @@ class Commands {
     }
     init() {
         const { exec } = require('child_process');
-        this.exec = exec; // `exec`을 바인딩
+        const { promisify } = require("util");
+
+        this.exec = promisify(exec);
     }
     // ### ifconfig
     // ifconfig() {
@@ -36,15 +38,18 @@ class Commands {
     //     `).trim();
     // }
     async ifconfig() {
-        return new Promise((resolve, reject) => {
-            this.exec("ifconfig", (err, stdout, stderr) => {
-                if (err || stderr) {
-                    reject(err || stderr);
-                    return;
-                }
-                resolve(stdout.trim());
-            });
-        });
+        // return new Promise((resolve, reject) => {
+        //     this.exec("ifconfig", (err, stdout, stderr) => {
+        //         if (err || stderr) {
+        //             reject(err || stderr);
+        //             return;
+        //         }
+        //         resolve(stdout.trim());
+        //     });
+        // });
+        const { stdout, stderr } = await this.exec("ifconfig");
+        if (stderr) return "";
+        return stdout.trim();
     }
 
     async ifconfigToJSON() {
@@ -166,9 +171,33 @@ class Commands {
         return resultObj;
     }
 
+    // ss -tan state established | awk '{print $4}' | awk -F ':' '{print $NF}' | sort | uniq -c | sort -nr
+    ss() {
+        return `
+            4 22
+            3 80
+            2 8501
+            2 631
+            2 25
+            1 Local
+            1 60170
+            1 60160
+        `.trim();
+    }
+
+    ssToJSON() {
+        const result = [];
+        const ss = this.ss();
+        return ss.split("\n").map((line) => {
+            const [count, port] = line.trim().split(" ");
+            return { "port": port, "count": count };
+        });
+    }
+
     getData() {
         this.init();
         // this.lastToJSON();
+        this.ssToJSON();
         return {
             "ifconfig": this.ifconfigToJSON(),
             "runtime": this.uptime(),
