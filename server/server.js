@@ -23,14 +23,14 @@ class Server {
         });
     }
 
-    fileRead(fileName) {
-        const fs = require("fs");
+    // fileRead(fileName) {
+    //     const fs = require("fs");
 
-        fs.writeFileSync(`./json/${fileName}.json`, (err, data) => {
-            if (err) throw err;
-            return data;
-        });
-    }
+    //     fs.writeFileSync(`./json/${fileName}.json`, (err, data) => {
+    //         if (err) throw err;
+    //         return data;
+    //     });
+    // }
     // getPrevIfconfig(name = "ifconfig") {
     //     const prevPackets = this.fileRead(name) || 0;
         
