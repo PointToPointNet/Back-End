@@ -5,19 +5,6 @@ const [fs, path, mysql, info, sqlTemplate] = [require('fs'),
     require("../database/sqlTemplate")];
 
 module.exports = () =>{
-// [2025-02-10 03:04:12] [Server ID: 1] [SRC: 121.36.146.173:None] -> [DST: 202.79.105.210:None] [PROTO: ICMP] [ACTION: BLOCK]
-// CREATE TABLE ufw_logs (
-//     id INT PRIMARY KEY AUTO_INCREMENT,
-//     server_id int not null,
-//     log_time DATETIME NOT NULL,
-//     src_ip VARCHAR(45) NOT NULL,  -- 출발지 IP
-//     dst_ip VARCHAR(45) NOT NULL,  -- 목적지 IP
-//     protocol VARCHAR(10) NOT NULL, -- 프로토콜 (TCP, UDP 등)
-//     src_port INT, -- 출발지 포트
-//     dst_port INT, -- 목적지 포트
-//     action VARCHAR(10) NOT NULL  -- 허용/차단 여부 (BLOCK, ALLOW)
-//    	-- foreign key (server_id) references servers(server_id)
-// );
     const db = mysql.createConnection(info);
     fs.readFile( path.join(__dirname,"../logs/ufw.logs.txt"),'utf8',(err,logs)=>{
         if(err){

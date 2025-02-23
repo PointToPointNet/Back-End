@@ -32,7 +32,8 @@ create table packet_usage(
     rx_data bigint not null,
     tx_data bigint not null,
     total bigint not null,
-    recorded_date date default(CURRENT_DATE)
+    recorded_date date default(CURRENT_DATE),
+    recorded_time Time default(CURRENT_TIME)
     -- foreign key (server_id) references servers(server_id)
 );
 
@@ -107,14 +108,16 @@ CREATE TABLE critical_logs (
 );
 
 create view total_table as 
-select m.recorded_date, m.server_id, m.mem_avg, c.cpu_avg,p.rx_data,p.tx_data,p.total,a.web_access_count,ae.web_error_count,ufw_count, auth_error_count
-from memory_usage m
-left join cpu_usage c
+select m.recorded_date, m.server_id, m.mem_avg, c.cpu_avg,p.rx_data,p.tx_data,p.total,a.web_access_count,ae.web_error_count,ufw_count, auth_error_count,mysql_err_count
+from (select server_id, recorded_date, truncate(avg( mem_avg ),0) mem_avg from memory_usage group by server_id, recorded_date) m
+left join (select server_id, recorded_date, truncate(avg( cpu_avg ),0) cpu_avg from cpu_usage group by server_id, recorded_date) c
 on m.recorded_date = c.recorded_date and 
 m.server_id = c.server_id
-left join packet_usage p
+left join (select server_id, recorded_date,sum(rx_data) rx_data, sum(tx_data) tx_data, sum(total) total from packet_usage group by server_id, recorded_date) p
 on p.recorded_date = m.recorded_date
 and p.server_id = m.server_id
+left join(select substr(log_time,1,10) recorded_date ,server_id,count(*) mysql_err_count from mysql_errors_log where log_level in ("ERROR", "CRITICAL") group by substr(log_time,1,10),server_id) mysql
+on m.recorded_date  = mysql.recorded_date and m.server_id = mysql.server_id
 left join (select substr( access_time,1,10 ) recorded_date ,server_id, count(*) web_access_count from apache_log a  where status_code in (200,201,204) group by substr( access_time,1,10 ),server_id) a
 on a.recorded_date = m.recorded_date 
 and a.server_id = m.server_id
