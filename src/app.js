@@ -19,6 +19,7 @@ class Service {
         const route_JSON = require("./route/route_JSON.js");
         const get_total_page_info = require("./route/get_total_page_info.js");
 
+        this.app.use("/server", route_JSON("server"));
         this.app.use("/network", route_JSON("ifconfig"));
         this.app.use("/runtime", route_JSON("runtime"));
         this.app.use("/status", route_JSON("status"));
@@ -26,6 +27,7 @@ class Service {
         this.app.use("/user_list", route_JSON("userList"));
         this.app.use("/used_port", route_JSON("usedPort"));
         this.app.use("/active_port", route_JSON("activePort"));
+        
         `
             /network => ifconfig 값 ifconfig.json
             /runtime => 서버 실행 시간(uptime) runtime.json

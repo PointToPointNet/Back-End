@@ -9,10 +9,17 @@ class Server {
     setServer() {
         const Commands = require("./command.js");
 
-        const serverName = ["test", "c1", "c2", "c3", "c4"];
+        const serverName = ["kkms","peter","lauren","JUH","SEOHYUNJI"] ;
         this.serverList = serverName.map((server) => {
             return new Commands(server);
         });
+
+        this.fileWrite("server", this.serverList.map((server) => {
+            return { name: server.id };
+        }));
+        console.log(this.serverList.map((server) => {
+            return { name: server.id };
+        }))
     }
 
     fileWrite(fileName, content) {
@@ -22,21 +29,6 @@ class Server {
             if (err) throw err;
         });
     }
-
-    // fileRead(fileName) {
-    //     const fs = require("fs");
-
-    //     fs.writeFileSync(`./json/${fileName}.json`, (err, data) => {
-    //         if (err) throw err;
-    //         return data;
-    //     });
-    // }
-    // getPrevIfconfig(name = "ifconfig") {
-    //     const prevPackets = this.fileRead(name) || 0;
-        
-    //     console.log(prevPackets);
-    //     return prevPackets;
-    // }
 
     async serverWork() {
         const serverDataList = [];
