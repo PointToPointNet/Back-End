@@ -121,7 +121,7 @@ class Commands {
     async last() {
         try {
             const { stdout, stderr } = await this.exec("last");
-            // console.log(stdout);
+            if (!(/\d{1,3}:\d{1,3}:\d{1,3}:\d{1,3}/.test(stdout)) || stderr) throw new Error();
             return stdout;
         } catch (err) {
             return `
@@ -200,7 +200,7 @@ class Commands {
     async ss() {
         try {
             const { stdout, stderr } = await this.exec("ss -tan state established | awk '{print $4}' | awk -F ':' '{print $NF}' | sort | uniq -c | sort -nr");
-            if (stderr) throw new Error();
+            if (stderr) throw new Error(); // docker에 ss가 없어서 한 처리
             return stdout.trim();
         } catch (err) {
             return `
