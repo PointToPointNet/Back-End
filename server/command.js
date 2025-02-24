@@ -2,6 +2,8 @@ class Commands {
     constructor(id) {
         this._id = id;
         this.exec = null;
+
+        this.serverName = "kkms"
     }
 
     get id() {
@@ -119,7 +121,7 @@ class Commands {
     async last() {
         try {
             const { stdout, stderr } = await this.exec("last");
-            console.log(stdout);
+            // console.log(stdout);
             return stdout;
         } catch (err) {
             return `
