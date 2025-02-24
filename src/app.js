@@ -26,6 +26,15 @@ class Service {
         this.app.use("/user_list", route_JSON("userList"));
         this.app.use("/used_port", route_JSON("usedPort"));
         this.app.use("/active_port", route_JSON("activePort"));
+        `
+            /network => ifconfig 값 ifconfig.json
+            /runtime => 서버 실행 시간(uptime) runtime.json
+            /status => memory, cpu, disk 정보 status.json
+            /ping => 네트워크 지연 시간(ping -c 1 8.8.8.8) ping.json
+            /user_list => 현재 접속 중인 유저(last) userList.json
+            /used_port => n번 보트에 m개 접속중(ss) usedPort.json
+            /active_port => 현재 열려있는 모든 포트 확인(netstat) activePort.json
+        `
 
         // DB 영역
         this.app.use("/get_total_page_info", get_total_page_info());

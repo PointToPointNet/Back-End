@@ -268,6 +268,7 @@ class Commands {
     async getData() {
         this.init();
         // this.lastToJSON();
+        // console.log("done");
         return {
             "ifconfig": await this.ifconfigToJSON(),
             "runtime": this.uptime(),
