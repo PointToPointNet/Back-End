@@ -3,6 +3,7 @@ class Server {
         this.id = id;
         // this.commands = null;
         this.serverList = null;
+        this.reloadTime = 3;
     }
 
     setServer() {
@@ -14,21 +15,6 @@ class Server {
         });
     }
 
-    // makeJSON(data) {
-    //     const serverNames = ["test", "c1", "c2", "c3", "c4"];
-    //     const result = serverNames.map(serverName => ({ [serverName]: data }));
-    //     return JSON.stringify(result);
-    // }
-
-    makeJSON(data) {
-        console.log(data);
-        return this.serverList.map(async (server) => {
-            return {
-                [server]: data
-            }
-        });
-    }
-
     fileWrite(fileName, content) {
         const fs = require("fs");
 
@@ -36,6 +22,21 @@ class Server {
             if (err) throw err;
         });
     }
+
+    // fileRead(fileName) {
+    //     const fs = require("fs");
+
+    //     fs.writeFileSync(`./json/${fileName}.json`, (err, data) => {
+    //         if (err) throw err;
+    //         return data;
+    //     });
+    // }
+    // getPrevIfconfig(name = "ifconfig") {
+    //     const prevPackets = this.fileRead(name) || 0;
+        
+    //     console.log(prevPackets);
+    //     return prevPackets;
+    // }
 
     async serverWork() {
         const serverDataList = [];
@@ -68,7 +69,7 @@ class Server {
         this.serverWork();
         const serverRun = setInterval(() => {
             this.serverWork();
-        }, 3000);
+        }, this.reloadTime * 1000);
     }
 
     run() {
