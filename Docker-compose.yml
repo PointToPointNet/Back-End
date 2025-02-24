@@ -1,18 +1,35 @@
 version: '3.0'
 
 services:
-    express-app:
-        image: peterseo9503/network_back_end
-        container_name: express-container
-        working_dir: /app
-        volumes:
-            - .:/app
-        ports:
-            - "3000:3000"  # 나중에 수정합시다! 
-        environment:
-            - DB_HOST=host.docker.internal  # 호스트의 DB에 연결
-            - DB_USER=root                 # DB 사용자명
-            - DB_PASSWORD=root      # DB 비밀번호
-            - DB_NAME=network          # 사용할 DB 이름 //이거 공용으로 만들어야할듯! 
-        stdin_open: true # 사용자의 표준입력을 열어둠
-        tty: true # 가상터미널 활성화
+  express-app:
+    image: peterseo9503/network_back_end
+    container_name: express-container
+    working_dir: /app
+    volumes:
+      - .:/app
+    ports:
+      - "3000:3000"  # 나중에 수정합시다!
+    environment:
+      - DB_HOST=mariadb  # MariaDB 컨테이너 이름으로 연결
+      - DB_USER=root
+      - DB_PASSWORD=root
+      - DB_NAME=network
+    depends_on:
+      - mariadb  # MariaDB 컨테이너가 먼저 시작되도록 함
+    stdin_open: true
+    tty: true
+
+  mariadb:
+    image: mariadb:10.3.39  # MariaDB 10.3.39 버전 사용
+    container_name: mariadb-container
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: network
+    ports:
+      - "3306:3306"  # 필요시 호스트에 포트 노출
+    volumes:
+      - mysql-data:/var/lib/mysql
+
+volumes:
+  mysql-data:

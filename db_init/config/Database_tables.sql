@@ -1,5 +1,5 @@
+DROP VIEW IF EXISTS total_table;
 DROP TABLE IF EXISTS servers, memory_usage,cpu_usage,packet_usage, apache_log,apache_errors_log ,mysql_errors_log,ufw_logs,auth_logs,critical_logs;
-DROP VIEW IF EXISTS TOTAL_TABLE;
 Create table servers (
 	server_id int primary key auto_increment,
     label varchar(50) not null,
