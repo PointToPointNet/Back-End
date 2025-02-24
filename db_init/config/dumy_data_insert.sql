@@ -1,3 +1,10 @@
+INSERT INTO servers VALUES(null,"kkms","192.168.1.10","kkms","1234");
+INSERT INTO servers VALUES(null,"Lauren","192.168.1.20","Lauren","1234");
+INSERT INTO servers VALUES(null,"JUH","192.168.1.30","JUH","1234");
+INSERT INTO servers VALUES(null,"Hyungee","192.168.1.40","Hyungee","1234");
+INSERT INTO servers VALUES(null,"sdh","192.168.1.50","sdh","1234");
+
+
 INSERT INTO memory_usage (server_id, mem_avg, recorded_date, recorded_time) VALUES (1, 81, '2025-01-01', '16:22:54');
 INSERT INTO memory_usage (server_id, mem_avg, recorded_date, recorded_time) VALUES (2, 51, '2025-01-01', '16:22:54');
 INSERT INTO memory_usage (server_id, mem_avg, recorded_date, recorded_time) VALUES (3, 73, '2025-01-01', '16:22:54');
