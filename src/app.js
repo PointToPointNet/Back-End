@@ -15,6 +15,15 @@ class Service {
         }));
     }
 
+    runServer() {
+        const path = require("path");
+        const { spawn } = require("child_process");
+        
+        const serverProcess = spawn("node", [path.join(__dirname, ".." ,"server", "server.js")], {
+            stdio: "inherit",
+        });
+    }
+
     route() {
         const route_JSON = require("./route/route_JSON.js");
         const get_total_page_info = require("./route/get_total_page_info.js");
@@ -27,7 +36,7 @@ class Service {
         this.app.use("/user_list", route_JSON("userList"));
         this.app.use("/used_port", route_JSON("usedPort"));
         this.app.use("/active_port", route_JSON("activePort"));
-        
+
         `
             /network => ifconfig 값 ifconfig.json
             /runtime => 서버 실행 시간(uptime) runtime.json
@@ -52,6 +61,7 @@ class Service {
 
     service() {
         this.init();
+        this.runServer();
         this.route();
         this.listen();
     }

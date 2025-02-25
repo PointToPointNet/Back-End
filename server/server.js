@@ -20,9 +20,10 @@ class Server {
     }
 
     fileWrite(fileName, content) {
+        const path = require("path");
         const fs = require("fs");
 
-        fs.writeFileSync(`./json/${fileName}.json`, JSON.stringify(content), (err) => {
+        fs.writeFileSync(path.join(__dirname, "json", `${fileName}.json`), JSON.stringify(content), (err) => {
             if (err) throw err;
         });
     }
