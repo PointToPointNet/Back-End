@@ -9,17 +9,14 @@ class Server {
     setServer() {
         const Commands = require("./command.js");
 
-        const serverName = ["kkms","peter","lauren","JUH","SHJ"] ;
+        const serverName = ["kkms", "peter", "lauren", "JUH", "SHJ"];
         this.serverList = serverName.map((server) => {
             return new Commands(server);
         });
 
-        this.fileWrite("server", this.serverList.map((server) => {
-            return { name: server.id };
+        this.fileWrite("server", this.serverList.map((server, id_index) => {
+            return { id: id_index + 1, name: server.id };
         }));
-        console.log(this.serverList.map((server) => {
-            return { name: server.id };
-        }))
     }
 
     fileWrite(fileName, content) {
