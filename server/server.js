@@ -3,7 +3,7 @@ class Server {
         this.id = id;
         // this.commands = null;
         this.serverList = null;
-        this.reloadTime = 3;
+        this.reloadTime = 1.5;
     }
 
     setServer() {
