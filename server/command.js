@@ -127,23 +127,9 @@ class Commands {
             return `
                 c21st11  pts/3        211.234.197.34   Tue Feb 25 16:03   still logged in
                 c21st16  pts/2        1.215.36.250     Tue Feb 25 12:51   still logged in
-                c21st16  pts/1        1.215.36.250     Tue Feb 25 12:51   still logged in
-                c21st16  pts/4        1.215.36.250     Tue Feb 25 10:37 - 10:52  (00:15)
-                c21st16  pts/3        1.215.36.250     Tue Feb 25 10:02 - 10:52  (00:49)
-                c21st16  pts/2        1.215.36.250     Tue Feb 25 09:41 - 12:50  (03:09)
-                c21st16  pts/2        1.215.36.250     Tue Feb 25 09:33 - 09:35  (00:01)
-                c21st16  pts/1        1.215.36.250     Tue Feb 25 09:17 - 12:50  (03:33)
-                c21st16  pts/2        61.109.77.168    Mon Feb 24 21:50 - 02:16  (04:25)
-                c21st16  pts/1        61.109.77.168    Mon Feb 24 20:48 - 02:16  (05:28)
-                c21st11  pts/5        211.234.195.22   Mon Feb 24 16:41 - 19:33  (02:51)
-                c21st12  pts/4        1.215.36.250     Mon Feb 24 16:04 - 19:16  (03:11)
-                c21st16  pts/3        1.215.36.250     Mon Feb 24 14:00 - 17:55  (03:54)
-                c21st16  pts/2        1.215.36.250     Mon Feb 24 13:55 - 17:55  (04:00)
-                c21st03  pts/1        1.215.36.250     Mon Feb 24 13:47 - 19:59  (06:12)
-                c21st16  pts/1        61.109.77.168    Mon Feb 24 13:27 - 13:35  (00:08)
-                c21st11  pts/4        211.234.196.131  Mon Feb 24 11:35 - 11:58  (00:23)
-                c21st16  pts/3        1.215.36.250     Mon Feb 24 10:51 - 13:06  (02:15)
-                c21st16  pts/3        1.215.36.250     Mon Feb 24 10:32 - 10:43  (00:10)
+                c21st12  pts/4        1.215.36.250     Mon Feb 24 16:04   still logged in
+                c21st03  pts/1        1.215.36.250     Mon Feb 24 13:47   still logged in
+                c21st11  pts/4        211.234.196.131  Mon Feb 24 11:35   still logged in
                 c21st11  pts/2        211.234.196.131  Mon Feb 24 10:30 - 11:58  (01:28)
                 c21st12  pts/5        1.215.36.250     Mon Feb 24 10:11 - 16:02  (05:50)
                 c21st11  pts/4        211.234.196.191  Mon Feb 24 09:59 - 10:21  (00:21)
@@ -219,10 +205,9 @@ class Commands {
                     "logoutTime": logoutTime ? logoutTime : "",
                     "connecting": connecting ? true : false
                 }
-                // if ( !result.some((userInfo) => userInfo["username"] === username ) ) {
-                //     result.push(userInfo);
-                // }
-                (result.some((userInfo) => userInfo["username"] === username)) || (result.push(userInfo));
+                if ( !result.some((userInfo) => userInfo["username"] === username ) ) {
+                    result.push(userInfo);
+                }
             }
         });
         // console.log(result);
