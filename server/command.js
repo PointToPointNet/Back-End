@@ -267,7 +267,10 @@ class Commands {
                     "logoutTime": logoutTime ? logoutTime : "",
                     "connecting": connecting ? true : false
                 }
-                result.push(userInfo);
+                // if ( !result.some((userInfo) => userInfo["username"] === username ) ) {
+                //     result.push(userInfo);
+                // }
+                (result.some((userInfo) => userInfo["username"] === username)) || (result.push(userInfo));
             }
         });
         // console.log(result);
