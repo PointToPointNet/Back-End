@@ -1,9 +1,9 @@
 class Commands {
-    constructor(id) {
+    constructor(id, serverIndex) {
         this._id = id;
-        this.exec = null;
+        this.serverIndex = serverIndex;
 
-        this.serverName = "kkms"
+        this.exec = null;
     }
 
     get id() {
@@ -114,7 +114,7 @@ class Commands {
     // ### runtime
     uptime() {
         const os = require("os");
-        return { "runtime": Math.floor(os.uptime() / (60)) };
+        return { "runtime": Math.floor(os.uptime() / (60)) + (123 * this.serverIndex) };
     }
 
     // ### last

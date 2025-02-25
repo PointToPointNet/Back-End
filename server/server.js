@@ -10,8 +10,8 @@ class Server {
         const Commands = require("./command.js");
 
         const serverName = ["kkms", "peter", "lauren", "JUH", "SHJ"];
-        this.serverList = serverName.map((server) => {
-            return new Commands(server);
+        this.serverList = serverName.map((server, serverIndex) => {
+            return new Commands(server, serverIndex);
         });
 
         this.fileWrite("server", this.serverList.map((server, id_index) => {
