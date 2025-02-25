@@ -9,7 +9,7 @@ class Server {
     setServer() {
         const Commands = require("./command.js");
 
-        const serverName = ["kkms","peter","lauren","JUH","SEOHYUNJI"] ;
+        const serverName = ["kkms","peter","lauren","JUH","SHJ"] ;
         this.serverList = serverName.map((server) => {
             return new Commands(server);
         });
