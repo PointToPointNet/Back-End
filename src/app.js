@@ -54,7 +54,7 @@ class Service {
 
         // DB Area
         this.app.use("/get_total_page_info", get_total_page_info());
-        this.app.use("get_total_all_info", get_total_all_info());
+        this.app.use("/get_total_all_info", get_total_all_info());
 
         // Chat Bot Area
         const chat_bot = new ChatBot("chat_bot")
