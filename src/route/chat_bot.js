@@ -18,8 +18,12 @@ class ChatBot {
     }
 
     async callChatBot(req, res, question = "") {
+        require("dotenv").config();
         const OpenAI = require("openai");
-        const openai = new OpenAI();
+        // console.log(first)
+        const openai = new OpenAI({
+            apiKey: process.env.OPENAI_API_KEY
+        });
         try {
             const completion = await openai.chat.completions.create({
                 model: "gpt-4o-mini",
