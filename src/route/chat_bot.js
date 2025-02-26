@@ -11,13 +11,13 @@ class ChatBot {
 
     prompt() {
         return `
-            내가 질문을 하면 네트워크나 서버에 관련된 질문에만 대답해줘. 
-            만약 네트워크나 서버에 관련된 질문이 아니면 "네트워크에 대한 질문을 해주세요."
-            라고 대답해줘 나의 질문은 : 
+            내가 질문을 하면 최대한 네트워크나 서버에 관련된 질문에만 대답해줘. 
+            만약 네트워크나 서버에 관련된 질문이 아니라면 네트워크에 대한 질문을 해주세요. 같은 느낌으로 대답해줘
+            나의 질문은 : 
         `.trim();
     }
 
-    async callChatBot(req, res, question = "") {
+    async callChatBot(question = "") {
         require("dotenv").config();
         const OpenAI = require("openai");
         // console.log(first)
@@ -33,22 +33,24 @@ class ChatBot {
                 ],
             });
 
-            console.log(completion.choices[0].message.content);
-            // res.json({ response: completion.choices[0].message.content });
-            res.send(completion.choices[0].message.content);
-
+            return completion.choices[0].message;
         } catch (error) {
-            console.error("Error calling OpenAI API:", error);
-            res.status(500).json({ error: "Failed to generate response." });
+            return error;
         }
     }
 
     active() {
-        this.router.get("/", (req, res) => {
-            this.callChatBot(req, res, "RX TX 그래프가 나타내는 의미가 뭘까?");
-        }).post("/", (req, res) => {
+        this.router.get("/", async (req, res) => {
+            const answer = await this.callChatBot("RX TX 그래프가 나타내는 의미가 뭘까?");
+            res.send(answer);
+        }).post("/", async (req, res) => {
             const { question } = req.body;
-            this.callChatBot(req, res, question);
+            console.log(question)
+            const answer = await this.callChatBot(question);
+            console.log("질문", question);
+            console.log("대답", answer);
+
+            res.send(answer);
         });
     }
 
