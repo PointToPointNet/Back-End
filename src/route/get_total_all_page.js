@@ -2,6 +2,7 @@ module.exports = () => {
     const express = require("express");
     const [router, path, mysql] = [express.Router(), require('path'), require("mysql2/promise")];
     const sqlTemplate = require(path.join(__dirname, "../database/queries"))
+    const dbinfo = require(path.join(__dirname, "../../src/database/info"));
 
     router.use(express.json());
     router.use(express.urlencoded({ extended: true }));
@@ -13,8 +14,8 @@ module.exports = () => {
             const db = await mysql.createConnection(dbinfo);
             const data = req.body;
             const { start_date, end_date } = data;
-
-            const [total_all_page] = await db.query(sqlTemplate.total_all_page, [start_date, end_date, start_date, end_date])
+            console.log(start_date,end_date);
+            const [total_all_page] = await db.query(sqlTemplate.select_total_all_sql, [start_date, end_date, start_date, end_date])
 
             const response = {
                 total_all_page: total_all_page
@@ -22,7 +23,7 @@ module.exports = () => {
             res.json(response);
             await db.end();
 
-        } catch {
+        } catch (err) {
             console.error(err);
             res.status(500).json({ error: err.message });
         }
