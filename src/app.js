@@ -29,7 +29,7 @@ class Service {
         const path = require("path");
         const route_JSON = require(path.join(__dirname, "/route", "/route_JSON.js"));
         const get_total_page_info = require(path.join(__dirname, "/route", "/get_total_page_info.js"));
-        const get_total_all_info = require(path(__dirname, "/route", "/get_total_all_info"));
+        const get_total_all_info = require(path.join(__dirname, "/route", "/get_total_all_page.js"));
         const ChatBot = require(path.join(__dirname, "/route", "/chat_bot.js"));
 
         // CLI command Area
