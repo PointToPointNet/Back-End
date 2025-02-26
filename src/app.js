@@ -29,6 +29,7 @@ class Service {
         const path = require("path");
         const route_JSON = require(path.join(__dirname, "/route", "/route_JSON.js"));
         const get_total_page_info = require(path.join(__dirname, "/route", "/get_total_page_info.js"));
+        const get_total_all_info = require(path(__dirname, "/route", "/get_total_all_info"));
         const ChatBot = require(path.join(__dirname, "/route", "/chat_bot.js"));
 
         // CLI command Area
@@ -53,6 +54,7 @@ class Service {
 
         // DB Area
         this.app.use("/get_total_page_info", get_total_page_info());
+        this.app.use("get_total_all_info", get_total_all_info());
 
         // Chat Bot Area
         const chat_bot = new ChatBot("chat_bot")
