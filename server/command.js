@@ -26,21 +26,23 @@ class Commands {
             return stdout.trim();
         } catch (err) {
             const getRandomPacket = () => { return Math.floor(this.randomReturner(50, 1000)).toString().padStart(4, '0'); }
-            const getRandomByte = (packet) => { return packet * (Math.floor(this.randomReturner(64, 100))).toString().padStart(4, '0'); }
+            const getRandomByte = (packet) => { return (packet * (Math.floor(this.randomReturner(64, 100)))).toString().padStart(5, '0'); }
             const enp_packets = getRandomPacket();
             const enp_bytes = getRandomByte(enp_packets);
             const _enp_packets = getRandomPacket();
             const _enp_bytes = getRandomByte(_enp_packets);
             const lo_packets = getRandomPacket();
             const lo_bytes = getRandomByte(lo_packets);
+            console.log(enp_bytes)
+            console.log(_enp_bytes)
             return (`
                 enp0s25: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
                 inet 110.5.238.107  netmask 255.255.255.128  broadcast 110.5.238.127
                 inet6 fe80::f900:ed1d:473c:e9d0  prefixlen 64  scopeid 0x20<link>
                 ether f0:de:f1:45:d1:33  txqueuelen 1000  (Ethernet)
-                RX packets 3569${enp_packets}  bytes 1638115${enp_bytes} (14.8 GB)
+                RX packets 3569${enp_packets}  bytes 163811${enp_bytes} (14.8 GB)
                 RX errors 0  dropped 173  overruns 0  frame 0
-                TX packets 5016${_enp_packets} bytes 4771605${_enp_bytes} (42.8 GB)
+                TX packets 5016${_enp_packets} bytes 477160${_enp_bytes} (42.8 GB)
                 TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
                 device interrupt 20  memory 0xf2600000-f2620000  
 
