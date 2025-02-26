@@ -93,6 +93,33 @@ class Commands {
         }
     }
 
+    // df | grep -E '^/dev/(sd|nvme|mapper)'
+    async df() {
+        try {
+            const { stdout, stderr } = await this.exec(`df | grep -E '^/dev/(sd|nvme|mapper)'`);
+
+            return stdout;
+        } catch (err) {
+            return (`
+                /dev/mapper/ubuntu--vg-root 959122528 340814340 569513772  38% /
+                /dev/sdb1                   983378332 231255296 702096492  25% /mnt/2e3994a2-9800-4aa0-ba06-47467ae99ef3
+                `).trim();
+        }
+    }
+
+    async dfToJSON() {
+        const df = await this.df();
+        const diskData = df.trim().split("\n").map((disk) => {
+            const [percentage, onlyNumber] = disk.match(/(\d+)\s*%/)
+            return Number(onlyNumber);
+        });
+        const result = diskData.reduce((totalDisk, curDisk) => {
+            return totalDisk + curDisk;
+        }, 0) / (diskData.length);
+        // console.log(result);
+        return `${result}%`;
+    }
+
     async serverStatus() {
         const os = require("os");
         const memory = {
@@ -105,9 +132,10 @@ class Commands {
         };
 
         const disk = {
-            "diskUtilization": "80%"
+            "diskUtilization": await this.dfToJSON(),
         };
 
+        // console.log(disk);
         return { "memory": memory, "cpu": cpu, "disk": disk };
     }
 
@@ -205,7 +233,7 @@ class Commands {
                     "logoutTime": logoutTime ? logoutTime : "",
                     "connecting": connecting ? true : false
                 }
-                if ( !result.some((userInfo) => userInfo["username"] === username ) ) {
+                if (!result.some((userInfo) => userInfo["username"] === username)) {
                     result.push(userInfo);
                 }
             }
@@ -321,8 +349,7 @@ class Commands {
 
     async getData() {
         this.init();
-        // this.lastToJSON();
-        // console.log("done");
+
         return {
             "ifconfig": await this.ifconfigToJSON(),
             "runtime": this.uptime(),
@@ -334,5 +361,6 @@ class Commands {
         };
     }
 }
-
+// const test = new Commands("test");
+// test.serverStatus();
 module.exports = Commands;
