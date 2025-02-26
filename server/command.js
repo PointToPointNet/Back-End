@@ -151,7 +151,7 @@ class Commands {
     async last() {
         try {
             const { stdout, stderr } = await this.exec("last");
-            if (!(/\d{1,3}:\d{1,3}:\d{1,3}:\d{1,3}/.test(stdout)) || stderr) throw new Error();
+            // if (!(/\d{1,3}:\d{1,3}:\d{1,3}:\d{1,3}/.test(stdout)) || stderr) throw new Error();
             return stdout;
         } catch (err) {
             return `
@@ -363,6 +363,6 @@ class Commands {
         };
     }
 }
-const test = new Commands("test");
-test.serverStatus();
+// const test = new Commands("test");
+// test.serverStatus();
 module.exports = Commands;
