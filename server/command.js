@@ -33,8 +33,8 @@ class Commands {
             const _enp_bytes = getRandomByte(_enp_packets);
             const lo_packets = getRandomPacket();
             const lo_bytes = getRandomByte(lo_packets);
-            console.log(enp_bytes)
-            console.log(_enp_bytes)
+            // console.log(enp_bytes)
+            // console.log(_enp_bytes)
             return (`
                 enp0s25: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
                 inet 110.5.238.107  netmask 255.255.255.128  broadcast 110.5.238.127
