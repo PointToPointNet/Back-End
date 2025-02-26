@@ -25,8 +25,8 @@ class Commands {
             const { stdout, stderr } = await this.exec("ifconfig");
             return stdout.trim();
         } catch (err) {
-            const getRandomPacket = () => { return Math.floor(this.randomReturner(5e7, 1e5)); }
-            const getRandomByte = (packet) => { return packet * (Math.floor(Math.random() * (100 - 64) + 64)); }
+            const getRandomPacket = () => { return Math.floor(this.randomReturner(50, 1000)).toString().padStart(4, '0'); }
+            const getRandomByte = (packet) => { return packet * (Math.floor(this.randomReturner(64, 100))).toString().padStart(4, '0'); }
             const enp_packets = getRandomPacket();
             const enp_bytes = getRandomByte(enp_packets);
             const _enp_packets = getRandomPacket();
@@ -38,9 +38,9 @@ class Commands {
                 inet 110.5.238.107  netmask 255.255.255.128  broadcast 110.5.238.127
                 inet6 fe80::f900:ed1d:473c:e9d0  prefixlen 64  scopeid 0x20<link>
                 ether f0:de:f1:45:d1:33  txqueuelen 1000  (Ethernet)
-                RX packets ${enp_packets}  bytes ${enp_bytes} (14.8 GB)
+                RX packets 3569${enp_packets}  bytes 1638115${enp_bytes} (14.8 GB)
                 RX errors 0  dropped 173  overruns 0  frame 0
-                TX packets ${_enp_packets} bytes ${_enp_bytes} (42.8 GB)
+                TX packets 5016${_enp_packets} bytes 4771605${_enp_bytes} (42.8 GB)
                 TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
                 device interrupt 20  memory 0xf2600000-f2620000  
 
@@ -48,9 +48,9 @@ class Commands {
                 inet 127.0.0.1  netmask 255.0.0.0
                 inet6 ::1  prefixlen 128  scopeid 0x10<host>
                 loop  txqueuelen 1000  (Local Loopback)
-                RX packets ${lo_packets}  bytes ${lo_bytes} (29.1 GB)
+                RX packets 4417${lo_packets}  bytes 3353196${lo_bytes} (29.1 GB)
                 RX errors 0  dropped 0  overruns 0  frame 0
-                TX packets ${lo_packets}  bytes ${lo_bytes} (29.1 GB)
+                TX packets 4417${lo_packets}  bytes 3353196${lo_bytes} (29.1 GB)
                 TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
             `).trim();
         }
