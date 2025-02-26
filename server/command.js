@@ -361,6 +361,6 @@ class Commands {
         };
     }
 }
-// const test = new Commands("test");
-// test.serverStatus();
+const test = new Commands("test");
+test.serverStatus();
 module.exports = Commands;
