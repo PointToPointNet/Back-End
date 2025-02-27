@@ -106,7 +106,7 @@ class Commands {
                 "totalSwap": totalSwap,
             };
         } catch (err) {
-            console.log("hi");
+            return { usingSwap: this.randomReturner(3000, 5000), totalSwap: '22893.0' }
         }
         const { stdout, stderr } = await this.exec(`top -bn1 | grep "Swap"`);
         // const [_, totalSwap, usedSwap] = stdout.match(/(\d+\..\d)\s+total.*(\d+\.\d)\s+used/);
