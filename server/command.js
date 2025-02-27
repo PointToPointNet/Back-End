@@ -97,7 +97,6 @@ class Commands {
 
     async top_swap() {
         // top -bn1 | grep "Swap"
-        // MiB Swap:  22893.0 total,  19513.5 free,   3379.5 used.  10951.4 avail Mem
         try {
             const { stdout, stderr } = await this.exec(`top -bn1 | grep "Swap"`);
             const [_, totalSwap, usedSwap] =stdout.match(/(\d+\.\d)\s+total.*\s(\d+\.\d)\s+used/);
@@ -108,9 +107,6 @@ class Commands {
         } catch (err) {
             return { usingSwap: this.randomReturner(3000, 5000), totalSwap: '22893.0' }
         }
-        const { stdout, stderr } = await this.exec(`top -bn1 | grep "Swap"`);
-        // const [_, totalSwap, usedSwap] = stdout.match(/(\d+\..\d)\s+total.*(\d+\.\d)\s+used/);
-        const t = stdout.match(/(\d+\..\d)\s+total/);
     }
 
     // df | grep -E '^/dev/(sd|nvme|mapper)'
