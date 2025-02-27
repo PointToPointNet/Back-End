@@ -95,11 +95,26 @@ class Commands {
         }
     }
 
+    async lscpu() {
+        // lscpu | grep "MHz"
+        // CPU MHz:                            1723.288
+        // CPU max MHz:                        1600.0000
+        // CPU min MHz:                        933.0000
+        try {
+            const { stdout, stderr } = await this.exec(`lscpu | grep "MHz"`);
+            const [_, cpuSpeed] = stdout.match(/CPU MHz:\s+(\d+\.\d+)/);
+
+            return cpuSpeed;
+        } catch (err) {
+            return `${this.randomReturner(900, 1600).toFixed(3)}`;
+        }
+    }
+
     async top_swap() {
         // top -bn1 | grep "Swap"
         try {
             const { stdout, stderr } = await this.exec(`top -bn1 | grep "Swap"`);
-            const [_, totalSwap, usedSwap] =stdout.match(/(\d+\.\d)\s+total.*\s(\d+\.\d)\s+used/);
+            const [_, totalSwap, usedSwap] = stdout.match(/(\d+\.\d)\s+total.*\s(\d+\.\d)\s+used/);
             return {
                 "usingSwap": usedSwap,
                 "totalSwap": totalSwap,
@@ -126,13 +141,17 @@ class Commands {
     async dfToJSON() {
         const df = await this.df();
         const diskData = df.trim().split("\n").map((disk) => {
-            const [percentage, onlyNumber] = disk.match(/(\d+)\s*%/)
-            return Number(onlyNumber);
+            // const [percentage, onlyNumber] = disk.match(/(\d+)\s*%/)
+            // return Number(onlyNumber);
+            const [_, dummy, using, left] = disk.trim().match(/\s(\d+)\s+(\d+)\s+(\d+)/);
+
+            return { "usingDisk": Number(using), "totalDisk": (Number(using) + Number(left)) };
         });
-        const result = diskData.reduce((totalDisk, curDisk) => {
-            return totalDisk + curDisk;
-        }, 0) / (diskData.length);
-        // console.log(result);
+
+        const result = diskData.reduce((accDisk, curDisk) => {
+            return { "usingDisk": (accDisk["usingDisk"] + curDisk["usingDisk"]), "totalDisk": (accDisk["totalDisk"] + curDisk["totalDisk"]) };
+        }, { "usingDisk": 0, "totalDisk": 0 });
+
         return `${result}%`;
     }
 
@@ -147,13 +166,11 @@ class Commands {
 
         const cpu = {
             "cpuUtilization": await this.top_cpu(),
+            "cpuSpeed": await this.lscpu()
         };
 
-        const disk = {
-            "diskUtilization": await this.dfToJSON(),
-        };
-
-        // console.log(swap);
+        const disk = await this.dfToJSON();
+        
         return { "memory": memory, "swap": swap, "cpu": cpu, "disk": disk };
     }
 
@@ -379,5 +396,6 @@ class Commands {
         };
     }
 }
-
+// const test = new Commands("test");
+// test.getData();
 module.exports = Commands;
