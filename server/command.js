@@ -157,7 +157,7 @@ class Commands {
             "diskUtilization": await this.dfToJSON(),
         };
 
-        console.log(swap);
+        // console.log(swap);
         return { "memory": memory, "swap": swap, "cpu": cpu, "disk": disk };
     }
 
