@@ -8,7 +8,6 @@ module.exports = () => {
     router.use(express.urlencoded({ extended: true }));
 
     router.get("/", (req, res) => {
-        res.send("POST로 요청 부탁드려요 ㅎ");
     }).post("/", async (req, res) => {
         try {
             const db = await mysql.createConnection(dbinfo);

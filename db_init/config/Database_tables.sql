@@ -1,5 +1,5 @@
 DROP VIEW IF EXISTS total_table;
-DROP TABLE IF EXISTS servers, memory_usage,cpu_usage,packet_usage, apache_log,apache_errors_log ,mysql_errors_log,ufw_logs,auth_logs,critical_logs;
+DROP TABLE IF EXISTS servers, memory_usage,cpu_usage,packet_usage, apache_log,apache_errors_log ,mysql_errors_log,ufw_logs,auth_logs,critical_logs,memory_swap_usage;
 Create table servers (
 	server_id int primary key auto_increment,
     label varchar(50) not null,
@@ -107,12 +107,26 @@ CREATE TABLE critical_logs (
    	-- foreign key (server_id) references servers(server_id)
 );
 
+Create table memory_swap_usage(
+	id int primary key auto_increment,
+    server_id int not null, 
+    mem_swap_avg int,
+    recorded_date Date default(CURRENT_DATE),
+    recorded_time Time default(CURRENT_TIME)
+    -- foreign key (server_id) references servers(server_id) 
+);
+
+
+
 create view total_table as 
-select m.recorded_date, m.server_id, m.mem_avg, c.cpu_avg,p.rx_data,p.tx_data,p.total,a.web_access_count,ae.web_error_count,ufw_count, auth_error_count,mysql_err_count
+select m.recorded_date, m.server_id, m.mem_avg, ms.mem_swap_avg, c.cpu_avg,p.rx_data,p.tx_data,p.total,a.web_access_count,ae.web_error_count,ufw_count, auth_error_count,mysql_err_count
 from (select server_id, recorded_date, truncate(avg( mem_avg ),0) mem_avg from memory_usage group by server_id, recorded_date) m
 left join (select server_id, recorded_date, truncate(avg( cpu_avg ),0) cpu_avg from cpu_usage group by server_id, recorded_date) c
 on m.recorded_date = c.recorded_date and 
 m.server_id = c.server_id
+left join (select server_id, recorded_date, truncate(avg( mem_swap_avg ),0) mem_swap_avg from memory_swap_usage group by server_id, recorded_date) ms
+on ms.server_id = m.server_id
+and m.recorded_date = ms.recorded_date
 left join (select server_id, recorded_date,sum(rx_data) rx_data, sum(tx_data) tx_data, sum(total) total from packet_usage group by server_id, recorded_date) p
 on p.recorded_date = m.recorded_date
 and p.server_id = m.server_id
