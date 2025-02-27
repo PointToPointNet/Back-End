@@ -1,5 +1,5 @@
 DROP VIEW IF EXISTS total_table;
-DROP TABLE IF EXISTS servers, memory_usage,cpu_usage,packet_usage, apache_log,apache_errors_log ,mysql_errors_log,ufw_logs,auth_logs,critical_logs,memory_swap_usage;
+DROP TABLE IF EXISTS servers, memory_usage,cpu_usage,packet_usage, apache_log,apache_errors_log ,mysql_errors_log,ufw_log,auth_log,critical_log,memory_swap_usage;
 Create table servers (
 	server_id int primary key auto_increment,
     label varchar(50) not null,
@@ -73,7 +73,7 @@ CREATE TABLE mysql_errors_log (
    	-- foreign key (server_id) references servers(server_id)
 );
 
-CREATE TABLE ufw_logs (
+CREATE TABLE ufw_log (
     id INT PRIMARY KEY AUTO_INCREMENT,
     server_id int not null,
     log_time DATETIME NOT NULL,
@@ -86,7 +86,7 @@ CREATE TABLE ufw_logs (
    	-- foreign key (server_id) references servers(server_id)
 );
 
-CREATE TABLE auth_logs (
+CREATE TABLE auth_log (
     id INT PRIMARY KEY AUTO_INCREMENT,
     server_id int not null,
     log_time DATETIME NOT NULL,
@@ -97,7 +97,7 @@ CREATE TABLE auth_logs (
   	-- foreign key (server_id) references servers(server_id)
 );
 
-CREATE TABLE critical_logs (
+CREATE TABLE critical_log (
     id INT PRIMARY KEY AUTO_INCREMENT,
     server_id int not null,
     log_time DATETIME NOT NULL,
@@ -137,9 +137,9 @@ on a.recorded_date = m.recorded_date
 and a.server_id = m.server_id
 left join (select substr(log_time,1,10) recorded_date , server_id,count(*) web_error_count from apache_errors_log where log_level in ('emerg','error') group by substr(log_time,1,10), server_id) ae
 on ae.recorded_date = m.recorded_date and ae.server_id = m.server_id
-left join (select substr(log_time, 1, 10) recorded_date, server_id, count(*) ufw_count from ufw_logs where action = "BLOCK" group by substr(log_time, 1, 10), server_id) ufw
+left join (select substr(log_time, 1, 10) recorded_date, server_id, count(*) ufw_count from ufw_log where action = "BLOCK" group by substr(log_time, 1, 10), server_id) ufw
 on ufw.recorded_date = m.recorded_date and ufw.server_id = m.server_id
-left join (select substr(log_time,1,10) recorded_date, server_id, count(*) auth_error_count from auth_logs 
+left join (select substr(log_time,1,10) recorded_date, server_id, count(*) auth_error_count from auth_log 
 where action like '%failure%' or action like '%not%' or action like '%Failed%' 
 group by substr(log_time,1,10) , server_id) auth
 on auth.recorded_date = m.recorded_date and auth.server_id = m.server_id;

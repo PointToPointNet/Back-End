@@ -6,7 +6,7 @@ const [fs, path, mysql, info, sqlTemplate] = [require('fs'),
 
 module.exports = ()=>{
     const db = mysql.createConnection(info);
-    fs.readFile(path.join(__dirname,"../logs/auth.log.txt"),'utf8',(err,logs)=>{
+    fs.readFile(path.join(__dirname,"../logs/auth_log.txt"),'utf8',(err,logs)=>{
         if(err){
             console.log(err);
             console.log("Auth_log 파일 읽기 실패!!");
