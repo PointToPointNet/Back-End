@@ -152,7 +152,7 @@ class Commands {
             return { "usingDisk": (accDisk["usingDisk"] + curDisk["usingDisk"]), "totalDisk": (accDisk["totalDisk"] + curDisk["totalDisk"]) };
         }, { "usingDisk": 0, "totalDisk": 0 });
 
-        return `${result}%`;
+        return result;
     }
 
     async serverStatus() {
