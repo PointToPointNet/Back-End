@@ -379,6 +379,5 @@ class Commands {
         };
     }
 }
-const test = new Commands("test");
-test.getData();
+
 module.exports = Commands;
