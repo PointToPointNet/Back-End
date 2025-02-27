@@ -82,17 +82,35 @@ class Commands {
         return resultObj;
     }
 
-    // ### memory, cpu, disk
+    // ### memory, swap, cpu, disk
     async top_cpu() {
         // top -bn1 | grep "Cpu(s)"
         try {
             const { stdout, stderr } = await this.exec(`top -bn1 | grep "Cpu(s)"`);
-            const [_, cpuUtilization] = stdout.match(/(\d{1,3}\.\d)\s+id/)
+            const [_, cpuUtilization] = stdout.match(/(\d{1,3}\.\d)\s+id/);
             // console.log(`${100.0 - Number(cpuUtilization)}%`);
             return `${100.0 - Number(cpuUtilization)}%`;
         } catch (err) {
             return `${this.randomReturner(5, 15).toFixed(1)}%`;
         }
+    }
+
+    async top_swap() {
+        // top -bn1 | grep "Swap"
+        // MiB Swap:  22893.0 total,  19513.5 free,   3379.5 used.  10951.4 avail Mem
+        try {
+            const { stdout, stderr } = await this.exec(`top -bn1 | grep "Swap"`);
+            const [_, totalSwap, usedSwap] =stdout.match(/(\d+\.\d)\s+total.*\s(\d+\.\d)\s+used/);
+            return {
+                "usingSwap": usedSwap,
+                "totalSwap": totalSwap,
+            };
+        } catch (err) {
+            console.log("hi");
+        }
+        const { stdout, stderr } = await this.exec(`top -bn1 | grep "Swap"`);
+        // const [_, totalSwap, usedSwap] = stdout.match(/(\d+\..\d)\s+total.*(\d+\.\d)\s+used/);
+        const t = stdout.match(/(\d+\..\d)\s+total/);
     }
 
     // df | grep -E '^/dev/(sd|nvme|mapper)'
@@ -129,6 +147,8 @@ class Commands {
             "totalMemory": os.totalmem(),
         };
 
+        const swap = await this.top_swap();
+
         const cpu = {
             "cpuUtilization": await this.top_cpu(),
         };
@@ -137,8 +157,8 @@ class Commands {
             "diskUtilization": await this.dfToJSON(),
         };
 
-        // console.log(disk);
-        return { "memory": memory, "cpu": cpu, "disk": disk };
+        console.log(swap);
+        return { "memory": memory, "swap": swap, "cpu": cpu, "disk": disk };
     }
 
     // ### runtime
@@ -363,6 +383,6 @@ class Commands {
         };
     }
 }
-// const test = new Commands("test");
-// test.serverStatus();
+const test = new Commands("test");
+test.getData();
 module.exports = Commands;
