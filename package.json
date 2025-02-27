@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "supervisor ./src/app.js"
+    "start": "supervisor ./src/app.js",
+    "server": "node ./server/server.js"
   },
   "author": "",
   "license": "ISC",
