@@ -1,3 +1,4 @@
-const main_db_write = require("./database/main_db_writer");
+const LogModuleRunner = require("./log_manager/LogModuleRunner");
 
-main_db_write();
+const runner = new LogModuleRunner();
+runner.run();

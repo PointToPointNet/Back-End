@@ -3,7 +3,7 @@ module.exports = () => {
     let copyInfo = info;
     copyInfo.multipleStatements = true;
     const db = mysql.createConnection(copyInfo);
-    fs.readFile(path.join(__dirname, "../config/Database_tables.sql"), "utf8", (err, sql) => {
+    fs.readFile(path.join(__dirname, "../sql/Database_tables.sql"), "utf8", (err, sql) => {
         if (err) {
             console.error("SQL 파일 읽기 실패!", err);
             return;

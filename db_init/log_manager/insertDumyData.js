@@ -5,7 +5,7 @@ module.exports = () => {
 
     const db = mysql.createConnection(copyInfo);
 
-    fs.readFile(path.join(__dirname, "../config/dumy_data_insert.sql"), 'utf8', (err, sql) => {
+    fs.readFile(path.join(__dirname, "../sql/dumy_data_insert.sql"), 'utf8', (err, sql) => {
         if (err) {
             console.log(err)
             console.log("Dumy 데이터 파일 읽기 실패!", err);
