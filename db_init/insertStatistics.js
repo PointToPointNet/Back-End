@@ -2,126 +2,147 @@ const si = require('systeminformation');
 const mysql = require('mysql2/promise');
 const info = require("../src/database/info");
 
-let preRX = 0;
-let preTX = 0;
+class InsertStatistics {
+    constructor() {
+        // 네트워크 관련 변수
+        this.preRX = 0;
+        this.preTX = 0;
+        this.acumulativeRX_total = 0;
+        this.acumulativeTX_total = 0;
 
-let acumulativeRX_total = 0;
-let acumulativeTX_total = 0;
+        // 측정 및 평균 관련 변수
+        this.flag = 1;
+        this.mem_usage = 0;
+        this.mem_avg = 0;
+        this.cpu_usage = 0;
+        this.cpu_avg = 0;
+        this.mem_swap_usage = 0;
+        this.mem_swap_avg = 0;
 
-let packet = 1;
-let flag = 1;
+        // 인터벌 ID 보관 (필요시 종료할 수 있도록)
+        this.statisticsInterval = null;
+        this.insertInterval = null;
+    }
 
-let mem_usage = 0;
-let mem_avg = 0;
+    async getStatistics() {
+        try {
+            // 메모리 측정 및 평균 계산
+            const mem = await si.mem();
+            this.mem_usage += ((mem.total - mem.free) / mem.total) * 100;
+            this.mem_avg = this.mem_usage / this.flag;
 
-let cpu_usage = 0;
-let cpu_avg = 0;
+            // 스왑 메모리 사용량 측정 (swaptotal이 0이면 계산 생략)
+            if (mem.swaptotal > 0) {
+                this.mem_swap_usage += (mem.swapused / mem.swaptotal) * 100;
+                this.mem_swap_avg = this.mem_swap_usage / this.flag;
+            } else {
+                this.mem_swap_avg = 0;
+            }
 
-let mem_swap_usage = 0;
-let mem_swap_avg = 0;
+            console.log("mem_avg :", this.mem_avg);
+            console.log("mem_swap_avg :", this.mem_swap_avg);
 
-const getMetrics = async () => {
-    try {
-        const mem = await si.mem();
-        // 메모리 사용량 (%) 계산
-        mem_usage += ((mem.total - mem.free) / mem.total) * 100;
-        mem_avg = mem_usage / flag;
-        
-        // 스왑 사용량 (%): swaptotal이 0이면 계산하지 않음
-        if(mem.swaptotal > 0) {
-            mem_swap_usage += (mem.swapused / mem.swaptotal) * 100;
-            mem_swap_avg = mem_swap_usage / flag;
-        } else {
-            mem_swap_avg = 0;
+            // CPU 사용량 측정 및 평균 계산
+            const cpus = await si.currentLoad();
+            this.cpu_usage += cpus.currentLoad;
+            this.cpu_avg = this.cpu_usage / this.flag;
+            console.log("cpu_avg :", this.cpu_avg);
+
+            // 네트워크 데이터 측정
+            const interfaces = await si.networkInterfaces();
+            const openIfaces = interfaces.filter(itf => itf.operstate === "up");
+            const ifaceNames = openIfaces.map(itf => itf.iface);
+
+            if (ifaceNames.length > 0) {
+                const iface = await si.networkStats(ifaceNames[0]);
+                const netData = iface[0];
+
+                const diffRX = this.preRX === 0 ? 0 : netData.rx_bytes - this.preRX;
+                const diffTX = this.preTX === 0 ? 0 : netData.tx_bytes - this.preTX;
+
+                this.acumulativeRX_total += diffRX;
+                this.acumulativeTX_total += diffTX;
+
+                this.preRX = netData.rx_bytes;
+                this.preTX = netData.tx_bytes;
+                console.log("RX 누적:", this.acumulativeRX_total, "TX 누적:", this.acumulativeTX_total);
+            } else {
+                console.log("활성화된 네트워크 인터페이스가 없습니다.");
+            }
+            
+            this.flag++;
+        } catch (err) {
+            console.error("getMetrics error:", err);
         }
-
-        console.log("mem_avg : " + mem_avg);
-        console.log("mem_swap_avg : " + mem_swap_avg);
-
-        // CPU 사용량 (%) 계산
-        const cpus = await si.currentLoad();
-        cpu_usage += cpus.currentLoad;
-        cpu_avg = cpu_usage / flag++;
-
-        console.log("cpu_avg : " + cpu_avg);
-
-        // 네트워크 데이터
-        const interfaces = await si.networkInterfaces();
-        const getOpenInterfaces = interfaces.filter(itf => itf.operstate === "up");
-        const getIface = getOpenInterfaces.map(itf => itf.iface);
-        const iface = await si.networkStats(getIface[0]);
-        const netData = iface[0];
-
-        const diffRX = preRX === 0 ? 0 : netData.rx_bytes - preRX;
-        const diffTX = preTX === 0 ? 0 : netData.tx_bytes - preTX;
-
-        acumulativeRX_total += diffRX;
-        acumulativeTX_total += diffTX;
-
-        preRX = netData.rx_bytes;
-        preTX = netData.tx_bytes;
-        console.log("RX 누적:", acumulativeRX_total, "TX 누적:", acumulativeTX_total);
-        console.log("측정 횟수(flag):", flag);
-    } catch (err) {
-        console.error("getMetrics error:", err);
     }
-};
 
-const insertDB = async (mem_avg, cpu_avg, mem_swap_avg, acumulativeRX_total, acumulativeTX_total) => {
-    try {
-        const date = new Date();
-        const splitedDate = date.toISOString().split("T");
-        const today = splitedDate[0];
-        const time = splitedDate[1].split(".")[0];
-        const db = await mysql.createConnection(info);
-        console.log("DB 연결 성공");
+    async insertDB() {
+        try {
+            const now = new Date();
+            const [today, timeWithMs] = now.toISOString().split("T");
+            const time = timeWithMs.split(".")[0];
 
-        // Memory Usage
-        const mem_sql = `INSERT INTO memory_usage VALUES (NULL, 1, ${Math.round(mem_avg)}, '${today}', '${time}');`;
-        let [memResult] = await db.query(mem_sql);
-        console.log("Memory Usage INSERT 완료:", memResult);
+            const db = await mysql.createConnection(info);
+            console.log("DB 연결 성공");
 
-        // CPU Usage
-        const cpu_sql = `INSERT INTO cpu_usage VALUES (NULL, 1, ${Math.round(cpu_avg)}, '${today}', '${time}');`;
-        let [cpuResult] = await db.query(cpu_sql);
-        console.log("CPU Usage INSERT 완료:", cpuResult);
+            // Memory Usage 삽입
+            const mem_sql = `INSERT INTO memory_usage VALUES (NULL, 1, ${Math.round(this.mem_avg)}, '${today}', '${time}');`;
+            let [memResult] = await db.query(mem_sql);
+            console.log("Memory Usage INSERT 완료:", memResult);
 
-        // Swap Memory Usage
-        const swap_sql = `INSERT INTO memory_swap_usage VALUES (NULL, 1, ${Math.round(mem_swap_avg)}, '${today}', '${time}');`;
-        let [swapResult] = await db.query(swap_sql);
-        console.log("Swap Memory Usage INSERT 완료:", swapResult);
+            // CPU Usage 삽입
+            const cpu_sql = `INSERT INTO cpu_usage VALUES (NULL, 1, ${Math.round(this.cpu_avg)}, '${today}', '${time}');`;
+            let [cpuResult] = await db.query(cpu_sql);
+            console.log("CPU Usage INSERT 완료:", cpuResult);
 
-        // Packet Usage
-        const packet_sql = `INSERT INTO packet_usage VALUES (NULL, 1, ${acumulativeTX_total}, ${acumulativeRX_total}, ${acumulativeRX_total + acumulativeTX_total}, '${today}', '${time}');`;
-        let [packetResult] = await db.query(packet_sql);
-        console.log("Packet Usage INSERT 완료:", packetResult);
+            // Swap Memory Usage 삽입
+            const swap_sql = `INSERT INTO memory_swap_usage VALUES (NULL, 1, ${Math.round(this.mem_swap_avg)}, '${today}', '${time}');`;
+            let [swapResult] = await db.query(swap_sql);
+            console.log("Swap Memory Usage INSERT 완료:", swapResult);
 
-        // DB 연결 종료
-        await db.end();
-        console.log("DB 연결 종료 및 값 초기화 완료");
+            // Packet Usage 삽입
+            const totalPacket = this.acumulativeRX_total + this.acumulativeTX_total;
+            const packet_sql = `INSERT INTO packet_usage VALUES (NULL, 1, ${this.acumulativeTX_total}, ${this.acumulativeRX_total}, ${totalPacket}, '${today}', '${time}');`;
+            let [packetResult] = await db.query(packet_sql);
+            console.log("Packet Usage INSERT 완료:", packetResult);
 
-        // 초기화
-        preRX = 0;
-        preTX = 0;
-        acumulativeRX_total = 0;
-        acumulativeTX_total = 0;
-        packet = 1;
-        flag = 1;
-        mem_usage = 0;
-        mem_avg = 0;
-        cpu_usage = 0;
-        cpu_avg = 0;
-        mem_swap_usage = 0;
-        mem_swap_avg = 0;
-    } catch (err) {
-        console.error("insertDB error:", err);
+            // DB 연결 종료
+            await db.end();
+            console.log("DB 연결 종료 및 값 초기화 완료");
+
+            // 측정값 초기화 (새로운 주기를 위해)
+            this.preRX = 0;
+            this.preTX = 0;
+            this.acumulativeRX_total = 0;
+            this.acumulativeTX_total = 0;
+            this.flag = 1;
+            this.mem_usage = 0;
+            this.mem_avg = 0;
+            this.cpu_usage = 0;
+            this.cpu_avg = 0;
+            this.mem_swap_usage = 0;
+            this.mem_swap_avg = 0;
+        } catch (err) {
+            console.error("insertDB error:", err);
+        }
     }
-};
 
-setInterval(() => {
-    getMetrics();
-}, 2000);
+    start() {
+        // 2초마다 측정 실행
+        this.statisticsInterval = setInterval(() => {
+            this.getStatistics();
+        }, 2000);
 
-setInterval(() => {
-    insertDB(mem_avg, cpu_avg, mem_swap_avg, acumulativeRX_total, acumulativeTX_total);
-}, 10000);
+        // 30분마다 DB 삽입 실행
+        this.insertInterval = setInterval(() => {
+            this.insertDB();
+        }, 1800000);
+    }
+
+    stop() {
+        if (this.statisticsInterval) clearInterval(this.statisticsInterval);
+        if (this.insertInterval) clearInterval(this.insertInterval);
+    }
+}
+
+module.exports = InsertStatistics;
