@@ -253,6 +253,7 @@ class Commands {
 
     async lastToJSON() {
         const result = [];
+        const usernameSet = new Set();
         const last = await this.last();
         const user = last.trim().split("\n");
         user.forEach((line) => {
@@ -267,9 +268,10 @@ class Commands {
                     "loginTime": loginTime,
                     "logoutTime": logoutTime ? logoutTime : "",
                     "connecting": connecting ? true : false
-                }
-                if (!result.some((userInfo) => userInfo["username"] === username)) {
+                };
+                if (!usernameSet.has(username)) {
                     result.push(userInfo);
+                    usernameSet.add(username);
                 }
             }
         });
